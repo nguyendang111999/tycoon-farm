@@ -4,6 +4,7 @@
     "references": [
         "Farm.Core",
         "Farm.Money",
+        "Farm.Construction",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
