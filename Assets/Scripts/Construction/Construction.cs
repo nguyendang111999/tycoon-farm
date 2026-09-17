@@ -150,6 +150,7 @@ namespace Farm.Construction
             _state = PlotState.Built;
             ApplyState();
             StartRegen();
+            ConstructionManager.Instance?.Register(this);
         }
 
         private void ApplyState()
@@ -234,7 +235,11 @@ namespace Farm.Construction
             SetStock(state.Stock);
 
             StopRegen();
-            if (_state == PlotState.Built && isActiveAndEnabled) StartRegen();
+            if (_state == PlotState.Built)
+            {
+                ConstructionManager.Instance?.Register(this);
+                if (isActiveAndEnabled) StartRegen();
+            }
         }
     }
 }
