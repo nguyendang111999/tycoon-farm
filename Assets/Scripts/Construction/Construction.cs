@@ -11,7 +11,7 @@ namespace Farm.Construction
     /// One stable GameObject for the plot's whole life — no runtime Instantiate/Destroy on build.
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public sealed class Construction : MonoBehaviour
+    public sealed class Construction : MonoBehaviour, ISupplier
     {
         private enum PlotState { Empty, Built }
 
@@ -62,6 +62,9 @@ namespace Farm.Construction
         public int MaxStock => _config.MaxStock;
         public bool IsMaxLevel => ConstructionMath.IsMaxLevel(_config, _level);
         public BigNumber NextUpgradeCost => ConstructionMath.CalculateUpgradeCost(_config, _level);
+
+        CropConfig ISupplier.Crop => _config;
+        Vector3 ISupplier.PickupPosition => transform.position;
 
         private void Awake()
         {
@@ -232,6 +235,8 @@ namespace Farm.Construction
             SetStock(_stock - 1);
             return true;
         }
+
+        bool ISupplier.TryCollect(out BigNumber payout) => TryCollectReserved(out payout);
 
         private void SetStock(int newStock)
         {

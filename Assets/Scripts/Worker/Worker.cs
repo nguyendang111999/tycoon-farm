@@ -1,18 +1,15 @@
 using System.Collections.Generic;
 using Farm.Core;
-using Farm.Money;
-using Farm.Construction;
-using Farm.Customer;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Farm.Worker
 {
-    /// <summary>A delivery worker: harvests a reserved crop and carries the payout to the customer who claimed it, then returns home.</summary>
+    /// <summary>A delivery worker: collects from a reserved supplier and carries the payout to whichever order claimed it, then returns home.</summary>
     [RequireComponent(typeof(NavMeshAgent))]
     public sealed class Worker : MonoBehaviour
     {
-        private enum WorkerState { Idle, ToConstruction, ToCustomer, Returning }
+        private enum WorkerState { Idle, ToSupplier, ToOrder, Returning }
 
         [SerializeField] private Animator _animator;
         [SerializeField] private Transform _carryAnchor;
@@ -22,9 +19,8 @@ namespace Farm.Worker
         private NavMeshAgent _agent;
         private WorkerState _state = WorkerState.Idle;
         private Transform _home;
-        private ICurrencyService _currency;
-        private Construction.Construction _construction;
-        private Customer.Customer _customer;
+        private ISupplier _supplier;
+        private IOrder _order;
         private BigNumber _payout;
         private GameObject _activeVisual;
 
@@ -36,21 +32,20 @@ namespace Farm.Worker
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
         }
 
-        public void Initialize(Transform home, ICurrencyService currency)
+        public void Initialize(Transform home)
         {
             _home = home;
-            _currency = currency;
             _agent.Warp(home.position);
             _state = WorkerState.Idle;
         }
 
-        public void AssignJob(Construction.Construction construction, Customer.Customer customer)
+        public void AssignJob(ISupplier supplier, IOrder order)
         {
-            _construction = construction;
-            _customer = customer;
+            _supplier = supplier;
+            _order = order;
 
-            _agent.SetDestination(construction.transform.position);
-            _state = WorkerState.ToConstruction;
+            _agent.SetDestination(supplier.PickupPosition);
+            _state = WorkerState.ToSupplier;
             SetLocomotion(moving: true, carrying: false);
         }
 
@@ -58,12 +53,12 @@ namespace Farm.Worker
         {
             switch (_state)
             {
-                case WorkerState.ToConstruction:
-                    if (HasArrived()) HandleArrivedAtConstruction();
+                case WorkerState.ToSupplier:
+                    if (HasArrived()) HandleArrivedAtSupplier();
                     break;
 
-                case WorkerState.ToCustomer:
-                    if (HasArrived()) HandleArrivedAtCustomer();
+                case WorkerState.ToOrder:
+                    if (HasArrived()) HandleArrivedAtOrder();
                     break;
 
                 case WorkerState.Returning:
@@ -72,34 +67,34 @@ namespace Farm.Worker
             }
         }
 
-        private void HandleArrivedAtConstruction()
+        private void HandleArrivedAtSupplier()
         {
-            if (_construction.TryCollectReserved(out _payout))
+            if (_supplier.TryCollect(out _payout))
             {
-                ShowCarriedVisual(_construction.ProductPrefab);
-                _agent.SetDestination(_customer.DeliveryPoint.position);
-                _state = WorkerState.ToCustomer;
+                ShowCarriedVisual(_supplier.ProductPrefab);
+                _agent.SetDestination(_order.DeliveryPosition);
+                _state = WorkerState.ToOrder;
                 SetLocomotion(moving: true, carrying: true);
             }
             else
             {
                 // Stock disappeared out from under the reservation; abandon the job cleanly.
-                _customer.ReleaseClaim();
+                _order.ReleaseClaim();
                 ReturnHome();
             }
         }
 
-        private void HandleArrivedAtCustomer()
+        private void HandleArrivedAtOrder()
         {
-            _customer.TryFulfillOrder(_construction.Config, _payout, _currency);
+            _order.Fulfill(_supplier.Crop, _payout);
             HideCarriedVisual();
             ReturnHome();
         }
 
         private void ReturnHome()
         {
-            _construction = null;
-            _customer = null;
+            _supplier = null;
+            _order = null;
             _agent.SetDestination(_home.position);
             _state = WorkerState.Returning;
             SetLocomotion(moving: true, carrying: false);

@@ -1,6 +1,4 @@
-using Farm.Construction;
 using Farm.Core;
-using Farm.Money;
 using UnityEngine;
 
 namespace Farm.Customer
@@ -17,12 +15,11 @@ namespace Farm.Customer
             if (!Input.GetKeyDown(_deliverKey)) return;
             if (CustomerManager.Instance == null || _testCrop == null) return;
 
-            ICurrencyService currency = MoneyManager.Instance.Currency;
             BigNumber payout = new BigNumber(_testPayout);
 
             foreach (Customer customer in CustomerManager.Instance.ActiveCustomers)
             {
-                if (customer.TryFulfillOrder(_testCrop, payout, currency))
+                if (customer.TryFulfillOrder(_testCrop, payout))
                 {
                     Debug.Log($"[CustomerDebugServer] Delivered {_testCrop.DisplayName} to a waiting customer.", customer);
                     return;

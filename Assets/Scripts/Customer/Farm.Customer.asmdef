@@ -4,7 +4,6 @@
     "references": [
         "Farm.Core",
         "Farm.Money",
-        "Farm.Construction",
         "Unity.TextMeshPro"
     ],
     "includePlatforms": [],

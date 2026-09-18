@@ -1,4 +1,3 @@
-using Farm.Construction;
 using Farm.Core;
 using Farm.Money;
 using TMPro;
@@ -9,7 +8,7 @@ namespace Farm.Customer
 {
     /// <summary>A customer: walks to a free dock, waits for its exact requested crop, then leaves once paid.</summary>
     [RequireComponent(typeof(NavMeshAgent))]
-    public sealed class Customer : MonoBehaviour
+    public sealed class Customer : MonoBehaviour, IOrder
     {
         private enum CustomerState { MovingToDock, Waiting, Leaving }
 
@@ -27,6 +26,8 @@ namespace Farm.Customer
         public bool IsClaimed { get; private set; }
         public bool IsWaiting => _state == CustomerState.Waiting;
         public Transform DeliveryPoint => AssignedSlot != null ? AssignedSlot.DeliveryPoint : null;
+
+        Vector3 IOrder.DeliveryPosition => DeliveryPoint.position;
 
         private void Awake()
         {
@@ -91,11 +92,11 @@ namespace Farm.Customer
             if (_animator != null) _animator.SetBool("IsMove", moving);
         }
 
-        public bool TryFulfillOrder(CropConfig deliveredCrop, BigNumber payout, ICurrencyService currency)
+        public bool TryFulfillOrder(CropConfig deliveredCrop, BigNumber payout)
         {
             if (_state != CustomerState.Waiting || deliveredCrop != RequestedCrop) return false;
 
-            currency.Add(CurrencyType.Cash, payout);
+            MoneyManager.Instance.Currency.Add(CurrencyType.Cash, payout);
 
             if (_payEffectPool != null && AssignedSlot != null)
             {
@@ -108,5 +109,7 @@ namespace Farm.Customer
             SetMoving(true);
             return true;
         }
+
+        bool IOrder.Fulfill(CropConfig deliveredCrop, BigNumber payout) => TryFulfillOrder(deliveredCrop, payout);
     }
 }

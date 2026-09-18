@@ -1,7 +1,6 @@
-using Farm.Core;
 using UnityEngine;
 
-namespace Farm.Construction
+namespace Farm.Core
 {
     /// <summary>Per-crop economy tuning: build cost, growth timing, and level-based profit/upgrade-cost curves.</summary>
     [CreateAssetMenu(menuName = "Farm/Construction/Crop Config", fileName = "CropConfig")]

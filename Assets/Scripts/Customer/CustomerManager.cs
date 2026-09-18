@@ -1,13 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
-using Farm.Construction;
 using Farm.Core;
-using Farm.Money;
 using UnityEngine;
 
 namespace Farm.Customer
 {
-    /// <summary>Owns the customer pool; spawns up to capacity whenever a dock slot and a built crop type are both available.</summary>
+    /// <summary>Owns the customer pool; spawns an order for a requested crop whenever a dock slot is free and there's room under capacity.</summary>
     public sealed class CustomerManager : MonoBehaviour
     {
         public static CustomerManager Instance { get; private set; }
@@ -15,7 +12,6 @@ namespace Farm.Customer
         [SerializeField] private Market _market;
         [SerializeField] private PrefabPool _customerPool;
         [SerializeField] private int _startingCapacity = 1;
-        [SerializeField] private float _retryInterval = 2f;
 
         private readonly List<Customer> _active = new List<Customer>();
         private readonly Dictionary<DockSlot, Customer> _slotOccupants = new Dictionary<DockSlot, Customer>();
@@ -29,35 +25,20 @@ namespace Farm.Customer
             _capacity = _startingCapacity;
         }
 
-        private void Start()
-        {
-            StartCoroutine(SpawnLoop());
-        }
-
         public void IncreaseCapacity(int delta)
         {
             _capacity = Mathf.Clamp(_capacity + delta, _capacity, _market.DockSlots.Count);
         }
 
-        private IEnumerator SpawnLoop()
+        public bool TrySpawnCustomer(CropConfig requestedCrop)
         {
-            var wait = new WaitForSeconds(_retryInterval);
-            while (true)
-            {
-                DockSlot freeSlot = _active.Count < _capacity ? FindFreeSlot() : null;
-                IReadOnlyList<CropConfig> builtCrops = ConstructionManager.Instance != null
-                    ? ConstructionManager.Instance.BuiltCropTypes
-                    : null;
+            if (requestedCrop == null || _active.Count >= _capacity) return false;
 
-                if (freeSlot == null || builtCrops == null || builtCrops.Count == 0)
-                {
-                    yield return wait;
-                    continue;
-                }
+            DockSlot freeSlot = FindFreeSlot();
+            if (freeSlot == null) return false;
 
-                CropConfig requestedCrop = builtCrops[Random.Range(0, builtCrops.Count)];
-                SpawnCustomer(requestedCrop, freeSlot);
-            }
+            SpawnCustomer(requestedCrop, freeSlot);
+            return true;
         }
 
         private DockSlot FindFreeSlot()
@@ -77,14 +58,6 @@ namespace Farm.Customer
 
             _slotOccupants[slot] = customer;
             _active.Add(customer);
-            if(slot == null)
-            {
-                Debug.Log($"No slot specified for customer requesting {requestedCrop.DisplayName}.");
-            }
-            if (requestedCrop == null)
-            {
-                Debug.Log($"No requested crop specified for customer at slot {slot.name}.");
-            }
             customer.Initialize(requestedCrop, slot, _market.CustomerEnd);
         }
 
@@ -97,3 +70,4 @@ namespace Farm.Customer
         }
     }
 }
+

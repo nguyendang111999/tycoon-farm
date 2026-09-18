@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Farm.Construction;
 using Farm.Core;
 using Farm.Customer;
-using Farm.Money;
+using Farm.Worker;
 using UnityEngine;
 
-namespace Farm.Worker
+namespace Farm.Gameplay
 {
-    /// <summary>Owns the worker pool and matches idle workers to a waiting, unclaimed customer with reservable stock.</summary>
+    /// <summary>Composition root: owns the worker pool and matches idle workers to a waiting, unclaimed customer with reservable stock.</summary>
     public sealed class WorkerManager : MonoBehaviour
     {
         public static WorkerManager Instance { get; private set; }
@@ -18,7 +18,7 @@ namespace Farm.Worker
         [SerializeField] private int _workerCount = 1;
         [SerializeField] private float _matchInterval = 0.5f;
 
-        private readonly List<Worker> _workers = new List<Worker>();
+        private readonly List<Worker.Worker> _workers = new List<Worker.Worker>();
 
         private void Awake()
         {
@@ -46,8 +46,8 @@ namespace Farm.Worker
         private void SpawnWorker()
         {
             GameObject instance = _workerPool.Rent(_market.DeliveryHome.position, _market.DeliveryHome.rotation);
-            var worker = instance.GetComponent<Worker>();
-            worker.Initialize(_market.DeliveryHome, MoneyManager.Instance.Currency);
+            var worker = instance.GetComponent<Worker.Worker>();
+            worker.Initialize(_market.DeliveryHome);
             _workers.Add(worker);
         }
 
@@ -56,22 +56,22 @@ namespace Farm.Worker
             var wait = new WaitForSeconds(_matchInterval);
             while (true)
             {
-                foreach (Worker worker in _workers)
+                foreach (Worker.Worker worker in _workers)
                 {
                     if (!worker.IsIdle) continue;
-                    if (!TryFindJob(out Construction.Construction construction, out Customer.Customer customer)) break;
+                    if (!TryFindJob(out ISupplier supplier, out IOrder order)) break;
 
-                    worker.AssignJob(construction, customer);
+                    worker.AssignJob(supplier, order);
                 }
 
                 yield return wait;
             }
         }
 
-        private static bool TryFindJob(out Construction.Construction construction, out Customer.Customer customer)
+        private static bool TryFindJob(out ISupplier supplier, out IOrder order)
         {
-            construction = null;
-            customer = null;
+            supplier = null;
+            order = null;
 
             if (CustomerManager.Instance == null || ConstructionManager.Instance == null) return false;
 
@@ -88,8 +88,8 @@ namespace Farm.Worker
                     continue;
                 }
 
-                construction = match;
-                customer = candidate;
+                supplier = match;
+                order = candidate;
                 return true;
             }
 
@@ -97,3 +97,4 @@ namespace Farm.Worker
         }
     }
 }
+

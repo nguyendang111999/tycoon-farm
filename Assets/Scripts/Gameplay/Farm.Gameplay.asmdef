@@ -1,8 +1,11 @@
 {
-    "name": "Farm.Worker",
-    "rootNamespace": "Farm.Worker",
+    "name": "Farm.Gameplay",
+    "rootNamespace": "Farm.Gameplay",
     "references": [
-        "Farm.Core"
+        "Farm.Core",
+        "Farm.Construction",
+        "Farm.Customer",
+        "Farm.Worker"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
