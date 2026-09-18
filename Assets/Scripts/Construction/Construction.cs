@@ -46,16 +46,19 @@ namespace Farm.Construction
         private Transform[] _stockAnchors;
         private GameObject[] _productInstances;
         private int _stock;
+        private int _reservedStock;
         private int _level = 1;
         private float _growElapsed;
         private Coroutine _regenRoutine;
 
         public CropConfig Config => _config;
         public Transform UITarget => _uiTarget;
+        public GameObject ProductPrefab => _productPrefab;
         public bool IsBuilt => _state == PlotState.Built;
         public BigNumber BuildCost => new BigNumber(_config.BuildCost);
         public int Level => _level;
         public int Stock => _stock;
+        public int AvailableStock => Mathf.Max(0, _stock - _reservedStock);
         public int MaxStock => _config.MaxStock;
         public bool IsMaxLevel => ConstructionMath.IsMaxLevel(_config, _level);
         public BigNumber NextUpgradeCost => ConstructionMath.CalculateUpgradeCost(_config, _level);
@@ -206,9 +209,36 @@ namespace Farm.Construction
             return true;
         }
 
+        public bool TryReserveStock()
+        {
+            if (AvailableStock <= 0) return false;
+
+            _reservedStock++;
+            return true;
+        }
+
+        public void ReleaseReservation()
+        {
+            if (_reservedStock > 0) _reservedStock--;
+        }
+
+        public bool TryCollectReserved(out BigNumber payout)
+        {
+            payout = BigNumber.Zero;
+            if (_reservedStock <= 0 || _stock <= 0) return false;
+
+            payout = ConstructionMath.CalculateHarvestPrice(_config, _level);
+            _reservedStock--;
+            SetStock(_stock - 1);
+            return true;
+        }
+
         private void SetStock(int newStock)
         {
             _stock = Mathf.Clamp(newStock, 0, MaxStock);
+            // A worker mid-delivery may hold a reservation the debug harvester just bypassed.
+            if (_reservedStock > _stock) _reservedStock = _stock;
+
             for (int i = 0; i < _productInstances.Length; i++)
             {
                 if (_productInstances[i] != null) _productInstances[i].SetActive(i < _stock);

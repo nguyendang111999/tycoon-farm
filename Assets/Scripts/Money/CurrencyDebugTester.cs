@@ -26,5 +26,20 @@ namespace Farm.Money
                 if (!spent) Debug.Log("[CurrencyDebugTester] Not enough balance to spend.");
             }
         }
+
+        [ContextMenu("Add Amount")]
+        private void AddAmount()
+        {
+            if (MoneyManager.Instance == null) return;
+            MoneyManager.Instance.Currency.Add(_currencyType, new BigNumber(_amount));
+        }
+
+        [ContextMenu("Spend Amount")]
+        private void SpendAmount()
+        {
+            if (MoneyManager.Instance == null) return;
+            bool spent = MoneyManager.Instance.Currency.TrySpend(_currencyType, new BigNumber(_amount));
+            if (!spent) Debug.Log("[CurrencyDebugTester] Not enough balance to spend.");
+        }
     }
 }

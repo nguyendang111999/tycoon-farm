@@ -1,0 +1,19 @@
+{
+    "name": "Farm.Worker",
+    "rootNamespace": "Farm.Worker",
+    "references": [
+        "Farm.Core",
+        "Farm.Money",
+        "Farm.Construction",
+        "Farm.Customer"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

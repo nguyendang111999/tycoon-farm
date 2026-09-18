@@ -24,6 +24,9 @@ namespace Farm.Customer
 
         public CropConfig RequestedCrop { get; private set; }
         public DockSlot AssignedSlot { get; private set; }
+        public bool IsClaimed { get; private set; }
+        public bool IsWaiting => _state == CustomerState.Waiting;
+        public Transform DeliveryPoint => AssignedSlot != null ? AssignedSlot.DeliveryPoint : null;
 
         private void Awake()
         {
@@ -41,6 +44,7 @@ namespace Farm.Customer
             RequestedCrop = requestedCrop;
             AssignedSlot = slot;
             _exitPoint = exitPoint;
+            IsClaimed = false;
 
             if (_orderText != null) _orderText.text = requestedCrop.DisplayName;
 
@@ -67,6 +71,19 @@ namespace Farm.Customer
         private bool HasArrived()
         {
             return !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance;
+        }
+
+        public bool TryClaim()
+        {
+            if (!IsWaiting || IsClaimed) return false;
+
+            IsClaimed = true;
+            return true;
+        }
+
+        public void ReleaseClaim()
+        {
+            IsClaimed = false;
         }
 
         private void SetMoving(bool moving)
