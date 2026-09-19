@@ -10,6 +10,11 @@ namespace Farm.Construction
             return new BigNumber(config.BaseHarvestPrice) * config.GetProfitMultiplier(level);
         }
 
+        public static BigNumber CalculateHarvestPrice(CropConfig config, int level, float managementMultiplier)
+        {
+            return CalculateHarvestPrice(config, level) * managementMultiplier;
+        }
+
         public static BigNumber CalculateUpgradeCost(CropConfig config, int currentLevel)
         {
             return config.GetUpgradeCost(currentLevel);

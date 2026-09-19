@@ -5,6 +5,7 @@
         "Farm.Core",
         "Farm.Money",
         "Farm.Construction",
+        "Farm.Upgrade",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

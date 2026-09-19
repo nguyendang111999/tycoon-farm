@@ -27,17 +27,29 @@ namespace Farm.Gameplay
 
         private void Start()
         {
-            for (int i = 0; i < _workerCount; i++)
-            {
-                SpawnWorker();
-            }
-
+            EnsureWorkerCount(_workerCount + ManagementBonuses.Current.BonusWorkers);
             StartCoroutine(MatchLoop());
         }
 
-        public void AddWorkers(int count)
+        private void OnEnable()
         {
-            for (int i = 0; i < count; i++)
+            ManagementBonuses.Current.Changed += HandleBonusesChanged;
+        }
+
+        private void OnDisable()
+        {
+            ManagementBonuses.Current.Changed -= HandleBonusesChanged;
+        }
+
+        private void HandleBonusesChanged()
+        {
+            EnsureWorkerCount(_workerCount + ManagementBonuses.Current.BonusWorkers);
+        }
+
+        /// <summary>Spawns workers until the pool reaches targetCount; never removes existing workers.</summary>
+        public void EnsureWorkerCount(int targetCount)
+        {
+            while (_workers.Count < targetCount)
             {
                 SpawnWorker();
             }

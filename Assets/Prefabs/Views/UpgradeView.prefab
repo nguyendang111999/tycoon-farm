@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2997557034086638700}
   - component: {fileID: 6222607886391610026}
   - component: {fileID: 441406178073637496}
+  - component: {fileID: 306975694506906241}
   m_Layer: 5
   m_Name: UpgradeView
   m_TagString: Untagged
@@ -34,7 +35,6 @@ RectTransform:
   - {fileID: 2414057996291953060}
   - {fileID: 5531245810146562481}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -60,6 +60,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -92,6 +93,23 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 32
+--- !u!114 &306975694506906241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093446925927276690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d8cf37ad6236184cb36698e6a45a7b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _viewRoot: {fileID: 6841362168975928661}
+  _itemsParent: {fileID: 4405951899791727024}
+  _itemPrefab: {fileID: 2146268700297472221, guid: 37a1f9ee4140b40c5b9c020a7137b0c1, type: 3}
+  _openButton: {fileID: 0}
+  _closeButton: {fileID: 434146147780046328}
 --- !u!1 &2244424146237259503
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +123,7 @@ GameObject:
   - component: {fileID: 4929159710582179007}
   - component: {fileID: 434146147780046328}
   m_Layer: 5
-  m_Name: Close
+  m_Name: btnClose
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,7 +142,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1201501036871561121}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -225,7 +242,7 @@ GameObject:
   - component: {fileID: 5855431975809576936}
   - component: {fileID: 5613505622248720033}
   m_Layer: 5
-  m_Name: Name (TMP)
+  m_Name: txtTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -244,7 +261,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5531245810146562481}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -380,7 +396,6 @@ RectTransform:
   m_Children:
   - {fileID: 3907896952240225623}
   m_Father: {fileID: 5531245810146562481}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -456,7 +471,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3907896952240225623}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -536,7 +550,6 @@ RectTransform:
   m_Children:
   - {fileID: 4405951899791727024}
   m_Father: {fileID: 284710302045710306}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -627,7 +640,6 @@ RectTransform:
   - {fileID: 4280481021526283759}
   - {fileID: 284710302045710306}
   m_Father: {fileID: 1201501036871561121}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}

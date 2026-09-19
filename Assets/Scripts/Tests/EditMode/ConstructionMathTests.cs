@@ -31,6 +31,16 @@ namespace Farm.Tests
         }
 
         [Test]
+        public void CalculateHarvestPrice_WithManagementMultiplier_ScalesResult()
+        {
+            CropConfig config = CreateConfig();
+            BigNumber basePrice = ConstructionMath.CalculateHarvestPrice(config, 1);
+            BigNumber boostedPrice = ConstructionMath.CalculateHarvestPrice(config, 1, 2f);
+
+            Assert.AreEqual(basePrice.ToDouble() * 2d, boostedPrice.ToDouble(), 1e-4);
+        }
+
+        [Test]
         public void IsMaxLevel_TrueOnlyAtConfiguredCap()
         {
             CropConfig config = CreateConfig();

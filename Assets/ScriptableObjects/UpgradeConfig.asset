@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255d4d6e3e0ff5e4fbb5566cc5656a63, type: 3}
+  m_Name: UpgradeConfig
+  m_EditorClassIdentifier: 
+  _entries:
+  - _id: Tomato_Revenue
+    _type: 0
+    _displayName: Tomato revenue x2
+    _icon: {fileID: 0}
+    _targetCrop: {fileID: 11400000, guid: eb033c6c4fc96774ba402666ee825231, type: 2}
+    _costCurrency: 0
+    _costMantissa: 500
+    _costExponent: 0
+    _effectAmount: 2
+  - _id: Add_Customer
+    _type: 2
+    _displayName: Add 1 customer
+    _icon: {fileID: 0}
+    _targetCrop: {fileID: 0}
+    _costCurrency: 0
+    _costMantissa: 500
+    _costExponent: 0
+    _effectAmount: 1

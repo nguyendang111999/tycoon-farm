@@ -207,7 +207,8 @@ namespace Farm.Construction
             payout = BigNumber.Zero;
             if (_stock <= 0) return false;
 
-            payout = ConstructionMath.CalculateHarvestPrice(_config, _level);
+            float management = ManagementBonuses.Current.GetCropProfitMultiplier(_config);
+            payout = ConstructionMath.CalculateHarvestPrice(_config, _level, management);
             SetStock(_stock - 1);
             return true;
         }
@@ -230,7 +231,8 @@ namespace Farm.Construction
             payout = BigNumber.Zero;
             if (_reservedStock <= 0 || _stock <= 0) return false;
 
-            payout = ConstructionMath.CalculateHarvestPrice(_config, _level);
+            float management = ManagementBonuses.Current.GetCropProfitMultiplier(_config);
+            payout = ConstructionMath.CalculateHarvestPrice(_config, _level, management);
             _reservedStock--;
             SetStock(_stock - 1);
             return true;

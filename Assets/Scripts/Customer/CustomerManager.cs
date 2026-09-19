@@ -15,24 +15,20 @@ namespace Farm.Customer
 
         private readonly List<Customer> _active = new List<Customer>();
         private readonly Dictionary<DockSlot, Customer> _slotOccupants = new Dictionary<DockSlot, Customer>();
-        private int _capacity;
 
         public IReadOnlyList<Customer> ActiveCustomers => _active;
+
+        /// <summary>Starting capacity plus any purchased AddCustomer upgrades, clamped to the number of dock slots.</summary>
+        public int Capacity => Mathf.Clamp(_startingCapacity + ManagementBonuses.Current.BonusCustomerCapacity, _startingCapacity, _market.DockSlots.Count);
 
         private void Awake()
         {
             Instance = this;
-            _capacity = _startingCapacity;
-        }
-
-        public void IncreaseCapacity(int delta)
-        {
-            _capacity = Mathf.Clamp(_capacity + delta, _capacity, _market.DockSlots.Count);
         }
 
         public bool TrySpawnCustomer(CropConfig requestedCrop)
         {
-            if (requestedCrop == null || _active.Count >= _capacity) return false;
+            if (requestedCrop == null || _active.Count >= Capacity) return false;
 
             DockSlot freeSlot = FindFreeSlot();
             if (freeSlot == null) return false;
