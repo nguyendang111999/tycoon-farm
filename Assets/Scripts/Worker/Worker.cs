@@ -11,6 +11,9 @@ namespace Farm.Worker
     {
         private enum WorkerState { Idle, ToSupplier, ToOrder, Returning }
 
+        private static readonly int IsMoveHash = Animator.StringToHash("IsMove");
+        private static readonly int IsCarryHash = Animator.StringToHash("IsCarry");
+
         [SerializeField] private Animator _animator;
         [SerializeField] private Transform _carryAnchor;
 
@@ -37,6 +40,7 @@ namespace Farm.Worker
             _home = home;
             _agent.Warp(home.position);
             _state = WorkerState.Idle;
+            SetLocomotion(moving: false, carrying: false);
         }
 
         public void AssignJob(ISupplier supplier, IOrder order)
@@ -62,7 +66,11 @@ namespace Farm.Worker
                     break;
 
                 case WorkerState.Returning:
-                    if (HasArrived()) _state = WorkerState.Idle;
+                    if (HasArrived())
+                    {
+                        _state = WorkerState.Idle;
+                        SetLocomotion(moving: false, carrying: false);
+                    }
                     break;
             }
         }
@@ -109,9 +117,8 @@ namespace Farm.Worker
         {
             if (_animator == null) return;
 
-            _animator.SetBool("IsMove", moving && !carrying);
-            _animator.SetBool("IsCarryMove", moving && carrying);
-            _animator.SetBool("IsEmpty", !carrying);
+            _animator.SetBool(IsMoveHash, moving);
+            _animator.SetBool(IsCarryHash, carrying);
         }
 
         private void ShowCarriedVisual(GameObject productPrefab)

@@ -12,6 +12,9 @@ namespace Farm.Customer
     {
         private enum CustomerState { MovingToDock, Waiting, Leaving }
 
+        private static readonly int IsMoveHash = Animator.StringToHash("IsMove");
+        private static readonly int IsCarryHash = Animator.StringToHash("IsCarry");
+
         [SerializeField] private Canvas _orderCanvas;
         [SerializeField] private TMP_Text _orderText;
         [SerializeField] private Animator _animator;
@@ -51,9 +54,10 @@ namespace Farm.Customer
 
             // Pooled agents can go stale relative to their new transform; Warp re-syncs them onto the NavMesh.
             _agent.Warp(transform.position);
+            _agent.updateRotation = true;
             _agent.SetDestination(slot.WaitPoint.position);
             _state = CustomerState.MovingToDock;
-            SetMoving(true);
+            SetLocomotion(moving: true, carrying: false);
         }
 
         private void Update()
@@ -61,7 +65,11 @@ namespace Farm.Customer
             if (_state == CustomerState.MovingToDock && HasArrived())
             {
                 _state = CustomerState.Waiting;
-                SetMoving(false);
+                SetLocomotion(moving: false, carrying: false);
+
+                // Face the dock's authored orientation instead of whatever direction we arrived from.
+                _agent.updateRotation = false;
+                transform.rotation = AssignedSlot.WaitPoint.rotation;
             }
             else if (_state == CustomerState.Leaving && HasArrived())
             {
@@ -87,9 +95,12 @@ namespace Farm.Customer
             IsClaimed = false;
         }
 
-        private void SetMoving(bool moving)
+        private void SetLocomotion(bool moving, bool carrying)
         {
-            if (_animator != null) _animator.SetBool("IsMove", moving);
+            if (_animator == null) return;
+
+            _animator.SetBool(IsMoveHash, moving);
+            _animator.SetBool(IsCarryHash, carrying);
         }
 
         public bool TryFulfillOrder(CropConfig deliveredCrop, BigNumber payout)
@@ -105,8 +116,9 @@ namespace Farm.Customer
             }
 
             _state = CustomerState.Leaving;
+            _agent.updateRotation = true;
             _agent.SetDestination(_exitPoint.position);
-            SetMoving(true);
+            SetLocomotion(moving: true, carrying: true);
             return true;
         }
 
