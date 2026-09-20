@@ -33,11 +33,11 @@ namespace Farm.Construction
             BuiltCropTypesChanged?.Invoke();
         }
 
-        public Construction FindAvailableConstruction(CropConfig crop)
+        public Construction FindAvailableConstruction(CropConfig crop, int minAvailableStock)
         {
             foreach (Construction construction in _built)
             {
-                if (construction.IsBuilt && construction.Config == crop && construction.AvailableStock > 0)
+                if (construction.IsBuilt && !construction.IsClaimed && construction.Config == crop && construction.AvailableStock >= minAvailableStock)
                 {
                     return construction;
                 }

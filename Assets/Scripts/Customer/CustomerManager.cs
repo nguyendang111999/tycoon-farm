@@ -26,14 +26,14 @@ namespace Farm.Customer
             Instance = this;
         }
 
-        public bool TrySpawnCustomer(CropConfig requestedCrop)
+        public bool TrySpawnCustomer(CropConfig requestedCrop, int quantity)
         {
             if (requestedCrop == null || _active.Count >= Capacity) return false;
 
             DockSlot freeSlot = FindFreeSlot();
             if (freeSlot == null) return false;
 
-            SpawnCustomer(requestedCrop, freeSlot);
+            SpawnCustomer(requestedCrop, quantity, freeSlot);
             return true;
         }
 
@@ -47,14 +47,14 @@ namespace Farm.Customer
             return null;
         }
 
-        private void SpawnCustomer(CropConfig requestedCrop, DockSlot slot)
+        private void SpawnCustomer(CropConfig requestedCrop, int quantity, DockSlot slot)
         {
             GameObject instance = _customerPool.Rent(_market.CustomerStart.position, _market.CustomerStart.rotation);
             var customer = instance.GetComponent<Customer>();
 
             _slotOccupants[slot] = customer;
             _active.Add(customer);
-            customer.Initialize(requestedCrop, slot, _market.CustomerEnd);
+            customer.Initialize(requestedCrop, quantity, slot, _market.CustomerEnd);
         }
 
         public void OnCustomerReachedExit(Customer customer)

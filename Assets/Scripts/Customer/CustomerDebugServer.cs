@@ -8,6 +8,7 @@ namespace Farm.Customer
     {
         [SerializeField] private KeyCode _deliverKey = KeyCode.J;
         [SerializeField] private CropConfig _testCrop;
+        [SerializeField] private GameObject _testProductPrefab;
         [SerializeField] private long _testPayout = 50;
 
         private void Update()
@@ -19,7 +20,7 @@ namespace Farm.Customer
 
             foreach (Customer customer in CustomerManager.Instance.ActiveCustomers)
             {
-                if (customer.TryFulfillOrder(_testCrop, payout))
+                if (customer.TryFulfillOrder(_testCrop, _testProductPrefab, payout))
                 {
                     Debug.Log($"[CustomerDebugServer] Delivered {_testCrop.DisplayName} to a waiting customer.", customer);
                     return;

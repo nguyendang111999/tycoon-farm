@@ -45,7 +45,6 @@ namespace Farm.Construction
         private Transform[] _stockAnchors;
         private GameObject[] _productInstances;
         private int _stock;
-        private int _reservedStock;
         private int _level = 1;
         private float _growElapsed;
         private Coroutine _regenRoutine;
@@ -57,13 +56,33 @@ namespace Farm.Construction
         public BigNumber BuildCost => new BigNumber(_config.BuildCost);
         public int Level => _level;
         public int Stock => _stock;
-        public int AvailableStock => Mathf.Max(0, _stock - _reservedStock);
+        public int AvailableStock => _stock;
         public int MaxStock => _config.MaxStock;
         public bool IsMaxLevel => ConstructionMath.IsMaxLevel(_config, _level);
         public BigNumber NextUpgradeCost => ConstructionMath.CalculateUpgradeCost(_config, _level);
+        public bool IsClaimed { get; private set; }
 
         CropConfig ISupplier.Crop => _config;
         Vector3 ISupplier.PickupPosition => transform.position;
+        GameObject ISupplier.ProductPrefab => _productPrefab;
+        int ISupplier.AvailableStock => _stock;
+        bool ISupplier.IsClaimed => IsClaimed;
+
+        public bool TryClaim()
+        {
+            if (_state != PlotState.Built || IsClaimed) return false;
+
+            IsClaimed = true;
+            return true;
+        }
+
+        public void ReleaseClaim()
+        {
+            IsClaimed = false;
+        }
+
+        bool ISupplier.TryClaim() => TryClaim();
+        void ISupplier.ReleaseClaim() => ReleaseClaim();
 
         private void Awake()
         {
@@ -211,38 +230,23 @@ namespace Farm.Construction
             return true;
         }
 
-        public bool TryReserveStock()
-        {
-            if (AvailableStock <= 0) return false;
-
-            _reservedStock++;
-            return true;
-        }
-
-        public void ReleaseReservation()
-        {
-            if (_reservedStock > 0) _reservedStock--;
-        }
-
-        public bool TryCollectReserved(out BigNumber payout)
+        public bool TryCollect(int count, out BigNumber payout)
         {
             payout = BigNumber.Zero;
-            if (_reservedStock <= 0 || _stock <= 0) return false;
+            if (count <= 0 || _stock < count) return false;
 
             float management = ManagementBonuses.Current.GetCropProfitMultiplier(_config);
-            payout = ConstructionMath.CalculateHarvestPrice(_config, _level, management);
-            _reservedStock--;
-            SetStock(_stock - 1);
+            BigNumber unitPrice = ConstructionMath.CalculateHarvestPrice(_config, _level, management);
+            payout = unitPrice * (double)count;
+            SetStock(_stock - count);
             return true;
         }
 
-        bool ISupplier.TryCollect(out BigNumber payout) => TryCollectReserved(out payout);
+        bool ISupplier.TryCollect(int count, out BigNumber payout) => TryCollect(count, out payout);
 
         private void SetStock(int newStock)
         {
             _stock = Mathf.Clamp(newStock, 0, MaxStock);
-            // A worker mid-delivery may hold a reservation the debug harvester just bypassed.
-            if (_reservedStock > _stock) _reservedStock = _stock;
 
             for (int i = 0; i < _productInstances.Length; i++)
             {
@@ -266,6 +270,7 @@ namespace Farm.Construction
             _state = state.IsBuilt ? PlotState.Built : PlotState.Empty;
             _level = Mathf.Max(1, state.Level);
             _growElapsed = state.GrowProgress;
+            IsClaimed = false;
             ApplyState();
             SetStock(state.Stock);
 

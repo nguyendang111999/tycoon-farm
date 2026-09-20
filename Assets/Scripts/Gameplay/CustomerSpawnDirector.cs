@@ -11,6 +11,8 @@ namespace Farm.Gameplay
     public sealed class CustomerSpawnDirector : MonoBehaviour
     {
         [SerializeField] private float _retryInterval = 2f;
+        [SerializeField] private int _minOrderQuantity = 1;
+        [SerializeField] private int _maxOrderQuantity = 3;
 
         private void Start()
         {
@@ -27,7 +29,7 @@ namespace Farm.Gameplay
             }
         }
 
-        private static void TrySpawnOne()
+        private void TrySpawnOne()
         {
             if (CustomerManager.Instance == null || ConstructionManager.Instance == null) return;
 
@@ -35,7 +37,8 @@ namespace Farm.Gameplay
             if (builtCrops.Count == 0) return;
 
             CropConfig requestedCrop = builtCrops[Random.Range(0, builtCrops.Count)];
-            CustomerManager.Instance.TrySpawnCustomer(requestedCrop);
+            int quantity = Random.Range(_minOrderQuantity, _maxOrderQuantity + 1);
+            CustomerManager.Instance.TrySpawnCustomer(requestedCrop, quantity);
         }
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Farm.Core;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,7 +8,7 @@ namespace Farm.Worker
     [RequireComponent(typeof(NavMeshAgent))]
     public sealed class Worker : MonoBehaviour
     {
-        private enum WorkerState { Idle, ToSupplier, ToOrder, Returning }
+        private enum WorkerState { Idle, ToSupplier, Collecting, ToOrder, Returning }
 
         private static readonly int IsMoveHash = Animator.StringToHash("IsMove");
         private static readonly int IsCarryHash = Animator.StringToHash("IsCarry");
@@ -17,7 +16,7 @@ namespace Farm.Worker
         [SerializeField] private Animator _animator;
         [SerializeField] private Transform _carryAnchor;
 
-        private readonly Dictionary<GameObject, GameObject> _carriedVisuals = new Dictionary<GameObject, GameObject>();
+        private CarryVisualController _carryVisuals;
 
         private NavMeshAgent _agent;
         private WorkerState _state = WorkerState.Idle;
@@ -25,7 +24,7 @@ namespace Farm.Worker
         private ISupplier _supplier;
         private IOrder _order;
         private BigNumber _payout;
-        private GameObject _activeVisual;
+        private int _collectedCount;
 
         public bool IsIdle => _state == WorkerState.Idle;
 
@@ -33,6 +32,7 @@ namespace Farm.Worker
         {
             _agent = GetComponent<NavMeshAgent>();
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
+            _carryVisuals = new CarryVisualController(_carryAnchor);
         }
 
         public void Initialize(Transform home)
@@ -40,6 +40,9 @@ namespace Farm.Worker
             _home = home;
             _agent.Warp(home.position);
             _state = WorkerState.Idle;
+            _collectedCount = 0;
+            _payout = BigNumber.Zero;
+            _carryVisuals.Hide();
             SetLocomotion(moving: false, carrying: false);
         }
 
@@ -47,6 +50,9 @@ namespace Farm.Worker
         {
             _supplier = supplier;
             _order = order;
+            _collectedCount = 0;
+            _payout = BigNumber.Zero;
+            _carryVisuals.Hide();
 
             _agent.SetDestination(supplier.PickupPosition);
             _state = WorkerState.ToSupplier;
@@ -58,7 +64,15 @@ namespace Farm.Worker
             switch (_state)
             {
                 case WorkerState.ToSupplier:
-                    if (HasArrived()) HandleArrivedAtSupplier();
+                    if (HasArrived())
+                    {
+                        _state = WorkerState.Collecting;
+                        CollectAvailableStock();
+                    }
+                    break;
+
+                case WorkerState.Collecting:
+                    CollectAvailableStock();
                     break;
 
                 case WorkerState.ToOrder:
@@ -75,34 +89,87 @@ namespace Farm.Worker
             }
         }
 
-        private void HandleArrivedAtSupplier()
+        private void CollectAvailableStock()
         {
-            if (_supplier.TryCollect(out _payout))
+            if (_supplier == null || _order == null)
             {
-                ShowCarriedVisual(_supplier.ProductPrefab);
-                _agent.SetDestination(_order.DeliveryPosition);
-                _state = WorkerState.ToOrder;
-                SetLocomotion(moving: true, carrying: true);
+                ReturnHome();
+                return;
+            }
+
+            int needed = _order.RequestedQuantity - _collectedCount;
+            if (needed <= 0)
+            {
+                FinishCollectingAndHeadToOrder();
+                return;
+            }
+
+            int canTake = Mathf.Min(needed, _supplier.AvailableStock);
+            if (canTake > 0 && _supplier.TryCollect(canTake, out BigNumber batchPayout))
+            {
+                _collectedCount += canTake;
+                _payout = _payout + batchPayout;
+                _carryVisuals.Show(_supplier.ProductPrefab, _collectedCount);
+            }
+
+            if (_collectedCount >= _order.RequestedQuantity)
+            {
+                FinishCollectingAndHeadToOrder();
             }
             else
             {
-                // Stock disappeared out from under the reservation; abandon the job cleanly.
-                _order.ReleaseClaim();
-                ReturnHome();
+                SetLocomotion(moving: false, carrying: _collectedCount > 0);
             }
+        }
+
+        private void FinishCollectingAndHeadToOrder()
+        {
+            if (_supplier != null && _supplier.IsClaimed)
+            {
+                _supplier.ReleaseClaim();
+            }
+
+            _agent.SetDestination(_order.DeliveryPosition);
+            _state = WorkerState.ToOrder;
+            SetLocomotion(moving: true, carrying: true);
         }
 
         private void HandleArrivedAtOrder()
         {
-            _order.Fulfill(_supplier.Crop, _payout);
-            HideCarriedVisual();
-            ReturnHome();
+            if (_order != null && _supplier != null)
+            {
+                _order.Fulfill(_supplier.Crop, _supplier.ProductPrefab, _payout);
+            }
+
+            _supplier = null;
+            _order = null;
+            _collectedCount = 0;
+            _payout = BigNumber.Zero;
+            _carryVisuals.Hide();
+
+            _agent.SetDestination(_home.position);
+            _state = WorkerState.Returning;
+            SetLocomotion(moving: true, carrying: false);
         }
 
         private void ReturnHome()
         {
+            if (_supplier != null && _supplier.IsClaimed)
+            {
+                _supplier.ReleaseClaim();
+            }
+
+            if (_order != null)
+            {
+                _order.ReleaseClaim();
+            }
+
             _supplier = null;
             _order = null;
+            _collectedCount = 0;
+            _payout = BigNumber.Zero;
+            _carryVisuals.Hide();
+
             _agent.SetDestination(_home.position);
             _state = WorkerState.Returning;
             SetLocomotion(moving: true, carrying: false);
@@ -119,28 +186,6 @@ namespace Farm.Worker
 
             _animator.SetBool(IsMoveHash, moving);
             _animator.SetBool(IsCarryHash, carrying);
-        }
-
-        private void ShowCarriedVisual(GameObject productPrefab)
-        {
-            if (productPrefab == null || _carryAnchor == null) return;
-
-            if (!_carriedVisuals.TryGetValue(productPrefab, out GameObject visual))
-            {
-                visual = Instantiate(productPrefab, _carryAnchor);
-                visual.transform.localPosition = Vector3.zero;
-                visual.SetActive(false);
-                _carriedVisuals[productPrefab] = visual;
-            }
-
-            _activeVisual = visual;
-            _activeVisual.SetActive(true);
-        }
-
-        private void HideCarriedVisual()
-        {
-            if (_activeVisual != null) _activeVisual.SetActive(false);
-            _activeVisual = null;
         }
     }
 }

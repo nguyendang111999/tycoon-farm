@@ -18,13 +18,17 @@ namespace Farm.Customer
         [SerializeField] private Canvas _orderCanvas;
         [SerializeField] private TMP_Text _orderText;
         [SerializeField] private Animator _animator;
+        [SerializeField] private Transform _carryAnchor;
         [SerializeField] private PrefabPool _payEffectPool;
+
+        private CarryVisualController _carryVisuals;
 
         private NavMeshAgent _agent;
         private CustomerState _state;
         private Transform _exitPoint;
 
         public CropConfig RequestedCrop { get; private set; }
+        public int RequestedQuantity { get; private set; }
         public DockSlot AssignedSlot { get; private set; }
         public bool IsClaimed { get; private set; }
         public bool IsWaiting => _state == CustomerState.Waiting;
@@ -41,14 +45,18 @@ namespace Farm.Customer
                 _orderCanvas = GetComponentInChildren<Canvas>();
                 _orderCanvas.worldCamera = Camera.main;
             }
+
+            _carryVisuals = new CarryVisualController(_carryAnchor);
         }
 
-        public void Initialize(CropConfig requestedCrop, DockSlot slot, Transform exitPoint)
+        public void Initialize(CropConfig requestedCrop, int quantity, DockSlot slot, Transform exitPoint)
         {
             RequestedCrop = requestedCrop;
+            RequestedQuantity = quantity;
             AssignedSlot = slot;
             _exitPoint = exitPoint;
             IsClaimed = false;
+            _carryVisuals.Hide();
 
             if (_orderText != null) _orderText.text = requestedCrop.DisplayName;
 
@@ -103,7 +111,7 @@ namespace Farm.Customer
             _animator.SetBool(IsCarryHash, carrying);
         }
 
-        public bool TryFulfillOrder(CropConfig deliveredCrop, BigNumber payout)
+        public bool TryFulfillOrder(CropConfig deliveredCrop, GameObject productPrefab, BigNumber payout)
         {
             if (_state != CustomerState.Waiting || deliveredCrop != RequestedCrop) return false;
 
@@ -115,6 +123,7 @@ namespace Farm.Customer
                 _payEffectPool.Return(effect, 2f);
             }
 
+            _carryVisuals.Show(productPrefab, RequestedQuantity);
             _state = CustomerState.Leaving;
             _agent.updateRotation = true;
             _agent.SetDestination(_exitPoint.position);
@@ -122,6 +131,6 @@ namespace Farm.Customer
             return true;
         }
 
-        bool IOrder.Fulfill(CropConfig deliveredCrop, BigNumber payout) => TryFulfillOrder(deliveredCrop, payout);
+        bool IOrder.Fulfill(CropConfig deliveredCrop, GameObject productPrefab, BigNumber payout) => TryFulfillOrder(deliveredCrop, productPrefab, payout);
     }
 }

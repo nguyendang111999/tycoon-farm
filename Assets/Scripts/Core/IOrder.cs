@@ -6,9 +6,10 @@ namespace Farm.Core
     public interface IOrder
     {
         CropConfig RequestedCrop { get; }
+        int RequestedQuantity { get; }
         Vector3 DeliveryPosition { get; }
 
-        bool Fulfill(CropConfig deliveredCrop, BigNumber payout);
+        bool Fulfill(CropConfig deliveredCrop, GameObject productPrefab, BigNumber payout);
         void ReleaseClaim();
     }
 }
