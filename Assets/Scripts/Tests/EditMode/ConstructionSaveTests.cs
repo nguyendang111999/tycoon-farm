@@ -125,5 +125,48 @@ namespace Farm.Tests
                 Object.DestroyImmediate(managerGo);
             }
         }
+
+        [Test]
+        public void ConstructionManager_RestoreState_NullOrEmpty_ResetsPlotsToDefault()
+        {
+            var managerGo = new GameObject("ConstructionManager");
+            var plotGo = new GameObject("Plot");
+            var dummyConfig = ScriptableObject.CreateInstance<CropConfig>();
+
+            try
+            {
+                var manager = managerGo.AddComponent<ConstructionManager>();
+                plotGo.AddComponent<BoxCollider>();
+                var plot = plotGo.AddComponent<CropPlot>();
+
+                typeof(CropPlot)
+                    .GetField("_config", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(plot, dummyConfig);
+
+                manager.RegisterPlot(plot);
+
+                plot.RestoreState(new CropPlot.ConstructionState
+                {
+                    IsBuilt = true,
+                    Level = 5,
+                    Stock = 3,
+                    GrowProgress = 1f
+                });
+
+                // Passing null/empty should reset plots back to unbuilt Lv.1
+                manager.RestoreState(null);
+
+                CropPlot.ConstructionState state = plot.CaptureState();
+                Assert.IsFalse(state.IsBuilt);
+                Assert.AreEqual(1, state.Level);
+                Assert.AreEqual(0, state.Stock);
+            }
+            finally
+            {
+                Object.DestroyImmediate(dummyConfig);
+                Object.DestroyImmediate(plotGo);
+                Object.DestroyImmediate(managerGo);
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace Farm.Core
         [Header("Identity")]
         [SerializeField] private string _cropId = "tomato";
         [SerializeField] private string _displayName = "Tomato";
+        [SerializeField] private Sprite _icon;
 
         [Header("Build")]
         [SerializeField] private long _buildCost = 50;
@@ -36,6 +37,7 @@ namespace Farm.Core
         public long BaseHarvestPrice => _baseHarvestPrice;
         public int MaxStock => _maxStock;
         public int MaxLevel => _maxLevel;
+        public Sprite Icon => _icon;
 
         public float GetProfitMultiplier(int level) => _profitMultiplierByLevel.Evaluate(level);
 

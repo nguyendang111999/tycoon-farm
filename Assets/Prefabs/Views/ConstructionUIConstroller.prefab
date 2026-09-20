@@ -153,6 +153,7 @@ MonoBehaviour:
   _buildCostText: {fileID: 1038689978091901618}
   _buildUnlockButton: {fileID: 6260117448425037416}
   _buildCloseButton: {fileID: 0}
+  _buildIcon: {fileID: 4617287764776342985}
   _upgradeViewRoot: {fileID: 6181457830924259296}
   _upgradeLevelText: {fileID: 8232828842135205406}
   _upgradeProductText: {fileID: 8819521540230109025}
@@ -602,6 +603,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4617287764776342985 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4580729427478393145, guid: bd3f29c6f2c0d4bcea19079314214c85, type: 3}
+  m_PrefabInstance: {fileID: 9187875296966567152}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &6260117448425037416 stripped

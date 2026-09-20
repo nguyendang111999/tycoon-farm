@@ -16,6 +16,8 @@ namespace Farm.Core
             _filePath = Path.Combine(Application.persistentDataPath, fileName);
         }
 
+        public string FilePath => _filePath;
+
         public void Register(ISaveable saveable)
         {
             if (!_saveables.Contains(saveable))
@@ -25,6 +27,33 @@ namespace Farm.Core
         }
 
         public void Unregister(ISaveable saveable) => _saveables.Remove(saveable);
+
+        public void DeleteSaveFile()
+        {
+            try
+            {
+                if (File.Exists(_filePath))
+                {
+                    File.Delete(_filePath);
+                    Debug.Log($"[SaveManager] Save file deleted: {_filePath}");
+                }
+            }
+            catch (IOException exception)
+            {
+                Debug.LogError($"[SaveManager] Failed to delete save file: {exception.Message}");
+            }
+        }
+
+        public void WipeAllData()
+        {
+            DeleteSaveFile();
+            foreach (ISaveable saveable in _saveables)
+            {
+                saveable.RestoreState(null);
+            }
+
+            Debug.Log("[SaveManager] All registered systems reset to initial/empty state.");
+        }
 
         public void Save()
         {

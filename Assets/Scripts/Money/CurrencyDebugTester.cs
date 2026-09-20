@@ -41,5 +41,11 @@ namespace Farm.Money
             bool spent = MoneyManager.Instance.Currency.TrySpend(_currencyType, new BigNumber(_amount));
             if (!spent) Debug.Log("[CurrencyDebugTester] Not enough balance to spend.");
         }
+
+        [ContextMenu("Wipe All Save Data")]
+        private void WipeAllSaveData()
+        {
+            GameSaveService.WipeAllData();
+        }
     }
 }

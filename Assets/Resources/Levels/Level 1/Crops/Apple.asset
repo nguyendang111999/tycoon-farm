@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cropId: apple
   _displayName: Apple
+  _icon: {fileID: 21300000, guid: 06109b14ae47608409942bd117edb5dc, type: 3}
   _buildCost: 500
   _boxOpenDuration: 1
   _growDuration: 8

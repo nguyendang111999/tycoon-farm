@@ -47,5 +47,11 @@ namespace Farm.Money
         {
             if (pauseStatus) GameSaveService.Save();
         }
+
+        [ContextMenu("Wipe All Save Data")]
+        public void WipeAllSaveData()
+        {
+            GameSaveService.WipeAllData();
+        }
     }
 }

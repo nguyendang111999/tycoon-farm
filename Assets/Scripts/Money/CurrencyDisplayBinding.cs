@@ -17,6 +17,8 @@ namespace Farm.Money
             _label = GetComponent<TMP_Text>();
         }
 
+        private void Start() => Refresh();
+
         private void OnEnable()
         {
             if (MoneyManager.Instance == null) return;

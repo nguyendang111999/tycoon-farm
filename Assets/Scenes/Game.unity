@@ -507,10 +507,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 722456803}
     m_Modifications:
-    - target: {fileID: 2621466813652594675, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 73.68
-      objectReference: {fileID: 0}
     - target: {fileID: 3153459173032504633, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -554,10 +550,6 @@ PrefabInstance:
     - target: {fileID: 7541503423789126762, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
       propertyPath: m_Name
       value: ConstructionUIConstroller
-      objectReference: {fileID: 0}
-    - target: {fileID: 9038774456844120634, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1174,34 +1166,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2123296561119176249, guid: 73b8246896ace4b568d8d18c8ea1e2e5, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1888088555}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73b8246896ace4b568d8d18c8ea1e2e5, type: 3}
 --- !u!224 &1888088553 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5689445426432129232, guid: 73b8246896ace4b568d8d18c8ea1e2e5, type: 3}
   m_PrefabInstance: {fileID: 1888088552}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1888088554 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2123296561119176249, guid: 73b8246896ace4b568d8d18c8ea1e2e5, type: 3}
-  m_PrefabInstance: {fileID: 1888088552}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1888088555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1888088554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5975b166dd7af1e488c582aca28b70a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currencyType: 0
 --- !u!114 &1888088556 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 404363853948783505, guid: 73b8246896ace4b568d8d18c8ea1e2e5, type: 3}

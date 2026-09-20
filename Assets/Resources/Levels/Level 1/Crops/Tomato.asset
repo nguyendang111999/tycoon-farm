@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cropId: tomato
   _displayName: Tomato
+  _icon: {fileID: 21300000, guid: cb407a551c1101c42bc60d46941acc45, type: 3}
   _buildCost: 5
   _boxOpenDuration: 1
   _growDuration: 5

@@ -120,7 +120,26 @@ namespace Farm.Construction
 
         public void RestoreState(string json)
         {
-            if (string.IsNullOrEmpty(json)) return;
+            _built.Clear();
+            _builtCropTypes.Clear();
+
+            if (string.IsNullOrEmpty(json))
+            {
+                foreach (CropPlot plot in _allPlots)
+                {
+                    if (plot == null) continue;
+                    plot.RestoreState(new CropPlot.ConstructionState
+                    {
+                        IsBuilt = false,
+                        Level = 1,
+                        Stock = 0,
+                        GrowProgress = 0f
+                    });
+                }
+
+                BuiltCropTypesChanged?.Invoke();
+                return;
+            }
 
             var data = JsonUtility.FromJson<ConstructionSaveData>(json);
             if (data == null || data.entries == null) return;
@@ -141,6 +160,10 @@ namespace Farm.Construction
                 if (entryById.TryGetValue(plot.PlotId, out CropPlot.ConstructionState state))
                 {
                     plot.RestoreState(state);
+                }
+                else
+                {
+                    plot.RestoreState(new CropPlot.ConstructionState { IsBuilt = false, Level = 1 });
                 }
             }
         }

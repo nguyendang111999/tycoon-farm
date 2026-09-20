@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cropId: banana
   _displayName: Banana
+  _icon: {fileID: 21300000, guid: d8572ecd8759c4f47b041e6bcf57fe35, type: 3}
   _buildCost: 250
   _boxOpenDuration: 1
   _growDuration: 8

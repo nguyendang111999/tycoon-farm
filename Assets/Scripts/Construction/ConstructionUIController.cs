@@ -21,6 +21,7 @@ namespace Farm.Construction
         [SerializeField] private TMP_Text _buildCostText;
         [SerializeField] private Button _buildUnlockButton;
         [SerializeField] private Button _buildCloseButton;
+        [SerializeField] private Image _buildIcon;
 
         [Header("Upgrade View")]
         [SerializeField] private GameObject _upgradeViewRoot;
@@ -79,6 +80,7 @@ namespace Farm.Construction
             ReparentPopup(_buildViewRoot.transform, plot.UITarget);
             _buildNameText.text = plot.Config.DisplayName;
             _buildCostText.text = NumberFormatter.Format(plot.BuildCost);
+            _buildIcon.sprite = plot.Config.Icon;
             _buildViewRoot.SetActive(true);
             _suppressCloseThisFrame = true;
         }
