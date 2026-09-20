@@ -26,7 +26,17 @@ namespace Farm.Worker
         private BigNumber _payout;
         private int _collectedCount;
 
+        public event System.Action<Worker> OrderDelivered;
+
         public bool IsIdle => _state == WorkerState.Idle;
+        public bool IsReturning => _state == WorkerState.Returning;
+        public bool CanAcceptJob => _state == WorkerState.Idle || _state == WorkerState.Returning;
+        public Transform Home => _home;
+
+        public void SetHome(Transform home)
+        {
+            _home = home;
+        }
 
         private void Awake()
         {
@@ -83,6 +93,8 @@ namespace Farm.Worker
                     if (HasArrived())
                     {
                         _state = WorkerState.Idle;
+                        _agent.ResetPath();
+                        if (_home != null) transform.rotation = _home.rotation;
                         SetLocomotion(moving: false, carrying: false);
                     }
                     break;
@@ -147,7 +159,15 @@ namespace Farm.Worker
             _payout = BigNumber.Zero;
             _carryVisuals.Hide();
 
-            _agent.SetDestination(_home.position);
+            OrderDelivered?.Invoke(this);
+
+            if (_state == WorkerState.ToSupplier) return;
+
+            if (_home != null)
+            {
+                _agent.SetDestination(_home.position);
+            }
+
             _state = WorkerState.Returning;
             SetLocomotion(moving: true, carrying: false);
         }
@@ -170,7 +190,11 @@ namespace Farm.Worker
             _payout = BigNumber.Zero;
             _carryVisuals.Hide();
 
-            _agent.SetDestination(_home.position);
+            if (_home != null)
+            {
+                _agent.SetDestination(_home.position);
+            }
+
             _state = WorkerState.Returning;
             SetLocomotion(moving: true, carrying: false);
         }
