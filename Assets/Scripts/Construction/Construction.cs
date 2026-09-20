@@ -35,9 +35,8 @@ namespace Farm.Construction
         [SerializeField] private PrefabPool _buildDoneEffectPool;
 
         [Header("Built State (Crop)")]
+        [Tooltip("Each direct child of this root is a stock anchor point.")]
         [SerializeField] private GameObject _builtStateRoot;
-        [Tooltip("Name of the child (under Built State root) whose children are stock anchor points (e.g. 'Tomato', 'Pumpkin') — set per crop prefab.")]
-        [SerializeField] private string _stockAnchorRootName = "Tomato";
         [Tooltip("Instantiated once per stock anchor and toggled on/off; never spawned at runtime.")]
         [SerializeField] private GameObject _productPrefab;
 
@@ -83,12 +82,11 @@ namespace Farm.Construction
 
         private void SetupStockAnchors()
         {
-            // Stock capacity is a design value from CropConfig; the anchor root only decides where visuals are placed.
-            Transform anchorRoot = _builtStateRoot != null ? _builtStateRoot.transform.Find(_stockAnchorRootName) : null;
-            int anchorCount = anchorRoot != null ? anchorRoot.childCount : 0;
+            // Stock capacity is a design value from CropConfig; the built root's children only decide where visuals are placed.
+            int anchorCount = _builtStateRoot != null ? _builtStateRoot.transform.childCount : 0;
             if (anchorCount < _config.MaxStock)
             {
-                Debug.LogWarning($"{name}: only {anchorCount} visual anchors under '{_stockAnchorRootName}' but CropConfig.MaxStock is {_config.MaxStock}.", this);
+                Debug.LogWarning($"{name}: only {anchorCount} visual anchors under '{_builtStateRoot?.name}' but CropConfig.MaxStock is {_config.MaxStock}.", this);
             }
 
             int usableAnchors = Mathf.Min(anchorCount, _config.MaxStock);
@@ -97,7 +95,7 @@ namespace Farm.Construction
 
             for (int i = 0; i < usableAnchors; i++)
             {
-                Transform anchor = anchorRoot.GetChild(i);
+                Transform anchor = _builtStateRoot.transform.GetChild(i);
                 _stockAnchors[i] = anchor;
 
                 if (_productPrefab != null)

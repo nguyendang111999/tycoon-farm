@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 5473569773201559785}
   - component: {fileID: 4734468584403736855}
   m_Layer: 0
-  m_Name: Tomato_03
+  m_Name: Tomato_03 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -216,8 +216,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3733490662227973571}
   - {fileID: 1919976566651885523}
@@ -232,16 +232,16 @@ LODGroup:
   m_GameObject: {fileID: 5473569773201198281}
   serializedVersion: 2
   m_LocalReferencePoint: {x: -0.0017213561, y: -0.0019704625, z: -0.00014097989}
-  m_Size: 0.17606398
+  m_Size: 1
   m_FadeMode: 0
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.023571635
+  - screenRelativeHeight: 0.13388108
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 7487456116394265693}
-  - screenRelativeHeight: 0.01
+  - screenRelativeHeight: 0.008816518
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 720977957349680984}
