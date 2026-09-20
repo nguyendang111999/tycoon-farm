@@ -1,215 +1,11 @@
 fileFormatVersion: 2
-guid: fa7f36c71b9e8fa4798df3a931c2fd92
+guid: a019bf6838aeb334e8037066c345db20
 ModelImporter:
   serializedVersion: 22200
-  internalIDToNameTable:
-  - first:
-      1: 100000
-    second: calf_l
-  - first:
-      1: 100002
-    second: calf_r
-  - first:
-      1: 100004
-    second: clavicle_l
-  - first:
-      1: 100006
-    second: clavicle_r
-  - first:
-      1: 100008
-    second: foot_l
-  - first:
-      1: 100010
-    second: foot_r
-  - first:
-      1: 100012
-    second: hand_l
-  - first:
-      1: 100014
-    second: hand_r
-  - first:
-      1: 100016
-    second: head
-  - first:
-      1: 100018
-    second: index_01_l
-  - first:
-      1: 100020
-    second: index_01_r
-  - first:
-      1: 100022
-    second: index_02_l
-  - first:
-      1: 100024
-    second: index_02_r
-  - first:
-      1: 100026
-    second: lowerarm_l
-  - first:
-      1: 100028
-    second: lowerarm_r
-  - first:
-      1: 100030
-    second: neck_01
-  - first:
-      1: 100032
-    second: pelvis
-  - first:
-      1: 100034
-    second: root
-  - first:
-      1: 100036
-    second: Skelet.c
-  - first:
-      1: 100038
-    second: spine_01
-  - first:
-      1: 100040
-    second: spine_02
-  - first:
-      1: 100042
-    second: spine_03
-  - first:
-      1: 100044
-    second: Stickman_heads_sphere
-  - first:
-      1: 100046
-    second: //RootNode
-  - first:
-      1: 100048
-    second: thigh_l
-  - first:
-      1: 100050
-    second: thigh_r
-  - first:
-      1: 100052
-    second: thumb_01_l
-  - first:
-      1: 100054
-    second: thumb_01_r
-  - first:
-      1: 100056
-    second: thumb_02_l
-  - first:
-      1: 100058
-    second: thumb_02_r
-  - first:
-      1: 100060
-    second: upperarm_l
-  - first:
-      1: 100062
-    second: upperarm_r
-  - first:
-      4: 400000
-    second: calf_l
-  - first:
-      4: 400002
-    second: calf_r
-  - first:
-      4: 400004
-    second: clavicle_l
-  - first:
-      4: 400006
-    second: clavicle_r
-  - first:
-      4: 400008
-    second: foot_l
-  - first:
-      4: 400010
-    second: foot_r
-  - first:
-      4: 400012
-    second: hand_l
-  - first:
-      4: 400014
-    second: hand_r
-  - first:
-      4: 400016
-    second: head
-  - first:
-      4: 400018
-    second: index_01_l
-  - first:
-      4: 400020
-    second: index_01_r
-  - first:
-      4: 400022
-    second: index_02_l
-  - first:
-      4: 400024
-    second: index_02_r
-  - first:
-      4: 400026
-    second: lowerarm_l
-  - first:
-      4: 400028
-    second: lowerarm_r
-  - first:
-      4: 400030
-    second: neck_01
-  - first:
-      4: 400032
-    second: pelvis
-  - first:
-      4: 400034
-    second: root
-  - first:
-      4: 400036
-    second: Skelet.c
-  - first:
-      4: 400038
-    second: spine_01
-  - first:
-      4: 400040
-    second: spine_02
-  - first:
-      4: 400042
-    second: spine_03
-  - first:
-      4: 400044
-    second: //RootNode
-  - first:
-      4: 400046
-    second: Stickman_heads_sphere
-  - first:
-      4: 400048
-    second: thigh_l
-  - first:
-      4: 400050
-    second: thigh_r
-  - first:
-      4: 400052
-    second: thumb_01_l
-  - first:
-      4: 400054
-    second: thumb_01_r
-  - first:
-      4: 400056
-    second: thumb_02_l
-  - first:
-      4: 400058
-    second: thumb_02_r
-  - first:
-      4: 400060
-    second: upperarm_l
-  - first:
-      4: 400062
-    second: upperarm_r
-  - first:
-      21: 2100000
-    second: No Name
-  - first:
-      43: 4300000
-    second: Stickman_heads_sphere
-  - first:
-      95: 9500000
-    second: //RootNode
-  - first:
-      137: 13700000
-    second: Stickman_heads_sphere
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
-    materialImportMode: 1
+    materialImportMode: 2
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -235,8 +31,37 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
-    isReadable: 1
+    clipAnimations:
+    - serializedVersion: 16
+      name: RunningCarry
+      takeName: mixamo.com
+      internalID: -203655887218126122
+      firstFrame: 0
+      lastFrame: 38
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
@@ -249,8 +74,8 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
-    nodeNameCollisionStrategy: 0
-    fileIdsGeneration: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -267,7 +92,7 @@ ModelImporter:
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
-    secondaryUVMarginMethod: 0
+    secondaryUVMarginMethod: 1
     secondaryUVMinLightmapResolution: 40
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
@@ -511,13 +336,18 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: Stickman_heads_sphere(Clone)
+    - name: Running(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
+    - name: Stickman_heads_sphere
+      parentName: Running(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -6.123234e-17, y: 1, z: 6.123234e-17, w: -3.7493994e-33}
+      scale: {x: 1, y: 1, z: 1}
     - name: Skelet.c
-      parentName: Stickman_heads_sphere(Clone)
+      parentName: Running(Clone)
       position: {x: -0.04505834, y: -0.094428115, z: 0.09329273}
       rotation: {x: 0.00034687287, y: 0.7387328, z: 0.67264456, w: 0.042697243}
       scale: {x: 1, y: 1, z: 1}
@@ -554,17 +384,17 @@ ModelImporter:
     - name: upperarm_l
       parentName: clavicle_l
       position: {x: -0.0000000027939677, y: 0.13966924, z: -0.000000006519258}
-      rotation: {x: -0.050697275, y: -0.06491551, z: -0.14667504, w: 0.9857496}
+      rotation: {x: -0.050697275, y: -0.0649155, z: -0.14667504, w: 0.98574954}
       scale: {x: 0.99999994, y: 0.99999994, z: 1.0000005}
     - name: lowerarm_l
       parentName: upperarm_l
       position: {x: -0.0000000037252903, y: 0.2638774, z: 0.00000015087426}
-      rotation: {x: -0.015827041, y: 0.10912122, z: -0.024311993, w: 0.9936051}
+      rotation: {x: -0.01582704, y: 0.10912121, z: -0.024311991, w: 0.993605}
       scale: {x: 1.0000006, y: 1.000001, z: 1.0000004}
     - name: hand_l
       parentName: lowerarm_l
       position: {x: -0.00000004284084, y: 0.19866185, z: 0.0000000433065}
-      rotation: {x: -0.19829358, y: 0.5961131, z: -0.021741236, w: 0.77772504}
+      rotation: {x: -0.19829357, y: 0.596113, z: -0.021741234, w: 0.777725}
       scale: {x: 1.0000001, y: 1, z: 1.0000002}
     - name: index_01_l
       parentName: hand_l
@@ -594,7 +424,7 @@ ModelImporter:
     - name: upperarm_r
       parentName: clavicle_r
       position: {x: 0.0000000055879354, y: 0.13966921, z: 0.0000000060535967}
-      rotation: {x: 0.050698034, y: -0.06491491, z: -0.14667633, w: -0.9857494}
+      rotation: {x: 0.050698034, y: -0.064914905, z: -0.14667633, w: -0.98574936}
       scale: {x: 1.0000001, y: 1.0000002, z: 1.0000002}
     - name: lowerarm_r
       parentName: upperarm_r
@@ -614,7 +444,7 @@ ModelImporter:
     - name: index_02_r
       parentName: index_01_r
       position: {x: 0.000000014901161, y: 0.05361091, z: -0.000000048428774}
-      rotation: {x: 0.103840455, y: 0.011190264, z: -0.2502326, w: 0.962536}
+      rotation: {x: 0.103840455, y: 0.0111902645, z: -0.2502326, w: 0.9625361}
       scale: {x: 0.9999996, y: 1, z: 1}
     - name: thumb_01_r
       parentName: hand_r
@@ -666,11 +496,6 @@ ModelImporter:
       position: {x: 0.000060849008, y: 0.29228517, z: -0.00028399628}
       rotation: {x: 0.78189266, y: -0.62286043, z: -0.02592362, w: -0.0040968726}
       scale: {x: 0.99999964, y: 0.99999994, z: 1.0000001}
-    - name: Stickman_heads_sphere
-      parentName: Stickman_heads_sphere(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -6.123234e-17, y: 1, z: 6.123234e-17, w: -3.7493994e-33}
-      scale: {x: 1, y: 1, z: 1}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -683,14 +508,14 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: c0957c1892bccde40b3a2c0c116d2a48, type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 25d41e3ec9c2ded4c8eb0ec648f2514e, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
   avatarSetup: 2
-  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
-  importBlendShapeDeformPercent: 0
-  remapMaterialsIfMaterialImportModeIsNone: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
