@@ -398,6 +398,7 @@ GameObject:
   - component: {fileID: 390076076}
   - component: {fileID: 390076075}
   - component: {fileID: 390076074}
+  - component: {fileID: 390076077}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -479,6 +480,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
+--- !u!114 &390076077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 390076073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dee8d9a66bcc090489115a01805370ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _groundY: 0
+  _minBounds: {x: -10, y: -15}
+  _maxBounds: {x: 10, y: 0}
+  _damping: 7
+  _maxSpeed: 50
+  _dragThresholdPixels: 10
 --- !u!1 &542542635
 GameObject:
   m_ObjectHideFlags: 0
@@ -993,6 +1012,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _deliverKey: 106
   _testCrop: {fileID: 11400000, guid: eb033c6c4fc96774ba402666ee825231, type: 2}
+  _testProductPrefab: {fileID: 0}
   _testPayout: 50
 --- !u!114 &1750618639
 MonoBehaviour:
@@ -1021,6 +1041,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _retryInterval: 2
+  _minOrderQuantity: 1
+  _maxOrderQuantity: 3
 --- !u!1001 &1888088552
 PrefabInstance:
   m_ObjectHideFlags: 0
