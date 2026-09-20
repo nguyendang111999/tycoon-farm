@@ -16,7 +16,7 @@ MonoBehaviour:
   _displayName: Tomato
   _buildCost: 5
   _boxOpenDuration: 1
-  _growDuration: 8
+  _growDuration: 5
   _baseHarvestPrice: 10
   _maxStock: 3
   _maxLevel: 10

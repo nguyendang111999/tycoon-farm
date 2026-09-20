@@ -546,7 +546,7 @@ Animator:
   m_GameObject: {fileID: 1677055900567251379}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c0957c1892bccde40b3a2c0c116d2a48, type: 3}
-  m_Controller: {fileID: 9100000, guid: add24113b454bf2489663a8409bc8c46, type: 2}
+  m_Controller: {fileID: 9100000, guid: a8cac2ac0a57ae848ae067efbd9fc12f, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -621,6 +621,7 @@ Transform:
   - {fileID: 1677055900567680505}
   - {fileID: 1677055900567680507}
   - {fileID: 1677055900567680483}
+  - {fileID: 8703180682405025927}
   m_Father: {fileID: 1677055900567680469}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1677055900567251385
@@ -1307,7 +1308,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8703180682405025927}
   m_Layer: 8
-  m_Name: Tomato
+  m_Name: StockAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1321,15 +1322,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4128504210031137394}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6189031941684784857}
   - {fileID: 2134864908244946697}
   - {fileID: 6514167691253798742}
-  m_Father: {fileID: 6540654423376592508}
+  m_Father: {fileID: 1677055900567680471}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4431322750582249919
 GameObject:
@@ -1356,7 +1357,7 @@ Transform:
   m_GameObject: {fileID: 4431322750582249919}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1458,7 +1459,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6805065296879471203}
-  - {fileID: 8703180682405025927}
   - {fileID: 4623635292401887444}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1472,7 +1472,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1499,6 +1499,7 @@ MonoBehaviour:
   _orderCanvas: {fileID: 1409059799009397886}
   _orderText: {fileID: 38075812431271673}
   _animator: {fileID: 1677055900559989277}
+  _carryAnchor: {fileID: 8703180682405025927}
   _payEffectPool: {fileID: 3656612489829214373}
 --- !u!114 &3656612489829214373
 MonoBehaviour:
@@ -1602,7 +1603,7 @@ Transform:
   m_GameObject: {fileID: 6729951307259581104}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1766,7 +1767,7 @@ Transform:
   m_GameObject: {fileID: 8955321197628121878}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

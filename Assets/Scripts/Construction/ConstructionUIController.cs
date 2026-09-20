@@ -33,7 +33,7 @@ namespace Farm.Construction
         [SerializeField] private Button _upgradeCloseButton;
 
         private ICurrencyService _currency;
-        private Construction _active;
+        private CropPlot _active;
         private bool _suppressCloseThisFrame;
         private Transform _buildViewHomeParent;
         private Transform _upgradeViewHomeParent;
@@ -71,7 +71,7 @@ namespace Farm.Construction
             HideUpgradeView();
         }
 
-        public void ShowBuildView(Construction plot)
+        public void ShowBuildView(CropPlot plot)
         {
             HideUpgradeView();
 
@@ -95,7 +95,7 @@ namespace Farm.Construction
             _active = null;
         }
 
-        public void ShowUpgradeView(Construction construction)
+        public void ShowUpgradeView(CropPlot construction)
         {
             HideBuildView();
 

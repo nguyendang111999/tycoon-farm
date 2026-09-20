@@ -11,7 +11,7 @@ namespace Farm.Construction
     /// One stable GameObject for the plot's whole life — no runtime Instantiate/Destroy on build.
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public sealed class Construction : MonoBehaviour, ISupplier
+    public sealed class CropPlot : MonoBehaviour, ISupplier
     {
         private enum PlotState { Empty, Built }
 
@@ -25,6 +25,8 @@ namespace Farm.Construction
         }
 
         [Header("Shared")]
+        [Tooltip("Unique identifier for save/load. If empty, defaults to the GameObject name.")]
+        [SerializeField] private string _plotId;
         [SerializeField] private CropConfig _config;
         [Tooltip("World Space Canvas positioned above this plot; the Build/Upgrade popup is reparented into it when shown.")]
         [SerializeField] private Transform _uiTarget;
@@ -49,6 +51,7 @@ namespace Farm.Construction
         private float _growElapsed;
         private Coroutine _regenRoutine;
 
+        public string PlotId => string.IsNullOrWhiteSpace(_plotId) ? gameObject.name : _plotId;
         public CropConfig Config => _config;
         public Transform UITarget => _uiTarget;
         public GameObject ProductPrefab => _productPrefab;
@@ -57,7 +60,7 @@ namespace Farm.Construction
         public int Level => _level;
         public int Stock => _stock;
         public int AvailableStock => _stock;
-        public int MaxStock => _config.MaxStock;
+        public int MaxStock => _config != null ? _config.MaxStock : 0;
         public bool IsMaxLevel => ConstructionMath.IsMaxLevel(_config, _level);
         public BigNumber NextUpgradeCost => ConstructionMath.CalculateUpgradeCost(_config, _level);
         public bool IsClaimed { get; private set; }
@@ -97,6 +100,8 @@ namespace Farm.Construction
 
             SetupStockAnchors();
             ApplyState();
+
+            ConstructionManager.Instance?.RegisterPlot(this);
         }
 
         private void SetupStockAnchors()
@@ -129,12 +134,18 @@ namespace Farm.Construction
 
         private void OnEnable()
         {
+            ConstructionManager.Instance?.RegisterPlot(this);
             if (_state == PlotState.Built) StartRegen();
         }
 
         private void OnDisable()
         {
             StopRegen();
+        }
+
+        private void OnDestroy()
+        {
+            ConstructionManager.Instance?.UnregisterPlot(this);
         }
 
         private void OnMouseDown()
@@ -174,6 +185,7 @@ namespace Farm.Construction
             ApplyState();
             StartRegen();
             ConstructionManager.Instance?.Register(this);
+            GameSaveService.Save();
         }
 
         private void ApplyState()
@@ -216,6 +228,7 @@ namespace Farm.Construction
             if (!currency.TrySpend(CurrencyType.Cash, NextUpgradeCost)) return false;
 
             _level++;
+            GameSaveService.Save();
             return true;
         }
 
@@ -248,9 +261,12 @@ namespace Farm.Construction
         {
             _stock = Mathf.Clamp(newStock, 0, MaxStock);
 
-            for (int i = 0; i < _productInstances.Length; i++)
+            if (_productInstances != null)
             {
-                if (_productInstances[i] != null) _productInstances[i].SetActive(i < _stock);
+                for (int i = 0; i < _productInstances.Length; i++)
+                {
+                    if (_productInstances[i] != null) _productInstances[i].SetActive(i < _stock);
+                }
             }
         }
 

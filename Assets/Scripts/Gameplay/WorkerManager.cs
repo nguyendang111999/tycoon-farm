@@ -91,7 +91,7 @@ namespace Farm.Gameplay
             {
                 if (!candidate.IsWaiting || candidate.IsClaimed) continue;
 
-                Construction.Construction match = ConstructionManager.Instance.FindAvailableConstruction(candidate.RequestedCrop, 1);
+                Construction.CropPlot match = ConstructionManager.Instance.FindAvailableConstruction(candidate.RequestedCrop, 1);
                 if (match == null || !match.TryClaim()) continue;
 
                 if (!candidate.TryClaim())

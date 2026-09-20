@@ -30,6 +30,7 @@ namespace Farm.Upgrade
 
             _purchased.Add(entry.Id);
             Changed?.Invoke();
+            GameSaveService.Save();
             return true;
         }
 

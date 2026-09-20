@@ -7,7 +7,7 @@ namespace Farm.Construction
     /// <summary>Manual test helper: press a key to harvest+sell one unit before Worker/Customer systems exist.</summary>
     public sealed class ConstructionDebugHarvester : MonoBehaviour
     {
-        [SerializeField] private Construction _target;
+        [SerializeField] private CropPlot _target;
         [SerializeField] private KeyCode _harvestKey = KeyCode.H;
 
         private void Update()
