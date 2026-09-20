@@ -336,18 +336,13 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: Running(Clone)
+    - name: Stickman_heads_sphere(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
-    - name: Stickman_heads_sphere
-      parentName: Running(Clone)
-      position: {x: -0, y: 0, z: 0}
-      rotation: {x: -6.123234e-17, y: 1, z: 6.123234e-17, w: -3.7493994e-33}
-      scale: {x: 1, y: 1, z: 1}
     - name: Skelet.c
-      parentName: Running(Clone)
+      parentName: Stickman_heads_sphere(Clone)
       position: {x: -0.04505834, y: -0.094428115, z: 0.09329273}
       rotation: {x: 0.00034687287, y: 0.7387328, z: 0.67264456, w: 0.042697243}
       scale: {x: 1, y: 1, z: 1}
@@ -384,17 +379,17 @@ ModelImporter:
     - name: upperarm_l
       parentName: clavicle_l
       position: {x: -0.0000000027939677, y: 0.13966924, z: -0.000000006519258}
-      rotation: {x: -0.050697275, y: -0.0649155, z: -0.14667504, w: 0.98574954}
+      rotation: {x: -0.050697275, y: -0.06491551, z: -0.14667504, w: 0.9857496}
       scale: {x: 0.99999994, y: 0.99999994, z: 1.0000005}
     - name: lowerarm_l
       parentName: upperarm_l
       position: {x: -0.0000000037252903, y: 0.2638774, z: 0.00000015087426}
-      rotation: {x: -0.01582704, y: 0.10912121, z: -0.024311991, w: 0.993605}
+      rotation: {x: -0.015827041, y: 0.10912122, z: -0.024311993, w: 0.9936051}
       scale: {x: 1.0000006, y: 1.000001, z: 1.0000004}
     - name: hand_l
       parentName: lowerarm_l
       position: {x: -0.00000004284084, y: 0.19866185, z: 0.0000000433065}
-      rotation: {x: -0.19829357, y: 0.596113, z: -0.021741234, w: 0.777725}
+      rotation: {x: -0.19829358, y: 0.5961131, z: -0.021741236, w: 0.77772504}
       scale: {x: 1.0000001, y: 1, z: 1.0000002}
     - name: index_01_l
       parentName: hand_l
@@ -424,7 +419,7 @@ ModelImporter:
     - name: upperarm_r
       parentName: clavicle_r
       position: {x: 0.0000000055879354, y: 0.13966921, z: 0.0000000060535967}
-      rotation: {x: 0.050698034, y: -0.064914905, z: -0.14667633, w: -0.98574936}
+      rotation: {x: 0.050698034, y: -0.06491491, z: -0.14667633, w: -0.9857494}
       scale: {x: 1.0000001, y: 1.0000002, z: 1.0000002}
     - name: lowerarm_r
       parentName: upperarm_r
@@ -444,7 +439,7 @@ ModelImporter:
     - name: index_02_r
       parentName: index_01_r
       position: {x: 0.000000014901161, y: 0.05361091, z: -0.000000048428774}
-      rotation: {x: 0.103840455, y: 0.0111902645, z: -0.2502326, w: 0.9625361}
+      rotation: {x: 0.103840455, y: 0.011190264, z: -0.2502326, w: 0.962536}
       scale: {x: 0.9999996, y: 1, z: 1}
     - name: thumb_01_r
       parentName: hand_r
@@ -496,6 +491,11 @@ ModelImporter:
       position: {x: 0.000060849008, y: 0.29228517, z: -0.00028399628}
       rotation: {x: 0.78189266, y: -0.62286043, z: -0.02592362, w: -0.0040968726}
       scale: {x: 0.99999964, y: 0.99999994, z: 1.0000001}
+    - name: Stickman_heads_sphere
+      parentName: Stickman_heads_sphere(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -6.123234e-17, y: 1, z: 6.123234e-17, w: -3.7493994e-33}
+      scale: {x: 1, y: 1, z: 1}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -508,7 +508,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 25d41e3ec9c2ded4c8eb0ec648f2514e, type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: c0957c1892bccde40b3a2c0c116d2a48, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
