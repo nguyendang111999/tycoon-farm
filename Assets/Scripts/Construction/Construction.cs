@@ -31,6 +31,10 @@ namespace Farm.Construction
         [Tooltip("World Space Canvas positioned above this plot; the Build/Upgrade popup is reparented into it when shown.")]
         [SerializeField] private Transform _uiTarget;
 
+        [Header("Stats")]
+        [SerializeField] private StatDefinition _cropProfitStat;
+        [SerializeField] private StatDefinition _cropGrowSpeedStat;
+
         [Header("Empty State (Box)")]
         [SerializeField] private GameObject _emptyStateRoot;
         [SerializeField] private string _openClipName = "BoxOpen";
@@ -50,6 +54,8 @@ namespace Farm.Construction
         private int _level = 1;
         private float _growElapsed;
         private Coroutine _regenRoutine;
+        private readonly StatSheet _stats = new StatSheet();
+        private readonly object _levelSourceToken = new object();
 
         public string PlotId => string.IsNullOrWhiteSpace(_plotId) ? gameObject.name : _plotId;
         public CropConfig Config => _config;
@@ -64,6 +70,7 @@ namespace Farm.Construction
         public bool IsMaxLevel => ConstructionMath.IsMaxLevel(_config, _level);
         public BigNumber NextUpgradeCost => ConstructionMath.CalculateUpgradeCost(_config, _level);
         public bool IsClaimed { get; private set; }
+        public StatSheet Stats => _stats;
 
         CropConfig ISupplier.Crop => _config;
         Vector3 ISupplier.PickupPosition => transform.position;
@@ -99,9 +106,19 @@ namespace Farm.Construction
             if (_emptyStateRoot != null) _boxAnimation = _emptyStateRoot.GetComponentInChildren<Animation>();
 
             SetupStockAnchors();
+            ApplyLevelModifier();
             ApplyState();
 
             ConstructionManager.Instance?.RegisterPlot(this);
+        }
+
+        private void ApplyLevelModifier()
+        {
+            if (_cropProfitStat == null || _config == null) return;
+
+            _stats.RemoveModifiersFrom(_levelSourceToken);
+            float multiplier = _config.GetProfitMultiplier(_level);
+            _stats.AddModifier(new StatModifier(_cropProfitStat, ModifierKind.Multiply, multiplier, _config), _levelSourceToken);
         }
 
         private void SetupStockAnchors()
@@ -218,8 +235,13 @@ namespace Farm.Construction
                 yield return null;
                 if (_stock >= MaxStock) continue;
 
+                float speed = _cropGrowSpeedStat != null
+                    ? GameStats.Global.Evaluate(_cropGrowSpeedStat, _stats.Evaluate(_cropGrowSpeedStat, 1f, _config), _config)
+                    : 1f;
+                float effectiveGrowDuration = speed > 0f ? _config.GrowDuration / speed : _config.GrowDuration;
+
                 _growElapsed += Time.deltaTime;
-                if (_growElapsed < _config.GrowDuration) continue;
+                if (_growElapsed < effectiveGrowDuration) continue;
 
                 _growElapsed = 0f;
                 SetStock(_stock + 1);
@@ -232,6 +254,7 @@ namespace Farm.Construction
             if (!currency.TrySpend(CurrencyType.Cash, NextUpgradeCost)) return false;
 
             _level++;
+            ApplyLevelModifier();
             GameSaveService.Save();
             return true;
         }
@@ -241,8 +264,7 @@ namespace Farm.Construction
             payout = BigNumber.Zero;
             if (_stock <= 0) return false;
 
-            float management = ManagementBonuses.Current.GetCropProfitMultiplier(_config);
-            payout = ConstructionMath.CalculateHarvestPrice(_config, _level, management);
+            payout = ConstructionMath.CalculateHarvestPrice(_config, _cropProfitStat, _stats, GameStats.Global);
             SetStock(_stock - 1);
             return true;
         }
@@ -252,8 +274,7 @@ namespace Farm.Construction
             payout = BigNumber.Zero;
             if (count <= 0 || _stock < count) return false;
 
-            float management = ManagementBonuses.Current.GetCropProfitMultiplier(_config);
-            BigNumber unitPrice = ConstructionMath.CalculateHarvestPrice(_config, _level, management);
+            BigNumber unitPrice = ConstructionMath.CalculateHarvestPrice(_config, _cropProfitStat, _stats, GameStats.Global);
             payout = unitPrice * (double)count;
             SetStock(_stock - count);
             return true;
@@ -291,6 +312,7 @@ namespace Farm.Construction
             _level = Mathf.Max(1, state.Level);
             _growElapsed = state.GrowProgress;
             IsClaimed = false;
+            ApplyLevelModifier();
             ApplyState();
             SetStock(state.Stock);
 

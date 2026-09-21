@@ -171,6 +171,9 @@ MonoBehaviour:
   _workerPool: {fileID: 12508088}
   _workerCount: 1
   _matchInterval: 0.5
+  _workerCountStat: {fileID: 11400000, guid: 61b551a044d450447bf66227940b71f9, type: 2}
+  _workerMoveSpeedStat: {fileID: 11400000, guid: 150fa2552a2d6d140a5afc4f39a31181, type: 2}
+  _baseMoveSpeed: 3.5
 --- !u!114 &12508088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -727,6 +730,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _config: {fileID: 11400000, guid: 25acb2a99851c3d41ab1ace4ed24b7fd, type: 2}
+  _cropProfitStat: {fileID: 11400000, guid: 791d268d34edcf44c9ed785eff86e9e9, type: 2}
+  _customerCapacityStat: {fileID: 11400000, guid: ec0bc8ddbf5dc334f8cd7e7320db8612, type: 2}
+  _workerCountStat: {fileID: 11400000, guid: 61b551a044d450447bf66227940b71f9, type: 2}
 --- !u!1 &1167942474
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,6 +1110,7 @@ MonoBehaviour:
   _market: {fileID: 313492796}
   _customerPool: {fileID: 1750618639}
   _startingCapacity: 1
+  _capacityStat: {fileID: 11400000, guid: ec0bc8ddbf5dc334f8cd7e7320db8612, type: 2}
 --- !u!114 &1750618638
 MonoBehaviour:
   m_ObjectHideFlags: 0

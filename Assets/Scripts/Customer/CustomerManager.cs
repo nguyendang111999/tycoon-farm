@@ -12,14 +12,25 @@ namespace Farm.Customer
         [SerializeField] private Market _market;
         [SerializeField] private PrefabPool _customerPool;
         [SerializeField] private int _startingCapacity = 1;
+        [SerializeField] private StatDefinition _capacityStat;
 
         private readonly List<Customer> _active = new List<Customer>();
         private readonly Dictionary<DockSlot, Customer> _slotOccupants = new Dictionary<DockSlot, Customer>();
 
         public IReadOnlyList<Customer> ActiveCustomers => _active;
 
-        /// <summary>Starting capacity plus any purchased AddCustomer upgrades, clamped to the number of dock slots.</summary>
-        public int Capacity => Mathf.Clamp(_startingCapacity + ManagementBonuses.Current.BonusCustomerCapacity, _startingCapacity, _market.DockSlots.Count);
+        /// <summary>Starting capacity plus any modifiers in GameStats.Global, clamped to the number of dock slots.</summary>
+        public int Capacity
+        {
+            get
+            {
+                int maxSlots = _market != null && _market.DockSlots != null ? _market.DockSlots.Count : _startingCapacity;
+                float evaluated = _capacityStat != null
+                    ? GameStats.Global.Evaluate(_capacityStat, _startingCapacity)
+                    : _startingCapacity;
+                return Mathf.Clamp(Mathf.RoundToInt(evaluated), _startingCapacity, maxSlots);
+            }
+        }
 
         private void Awake()
         {

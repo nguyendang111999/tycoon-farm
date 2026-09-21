@@ -16,7 +16,7 @@ MonoBehaviour:
   _displayName: Tomato
   _icon: {fileID: 21300000, guid: cb407a551c1101c42bc60d46941acc45, type: 3}
   _buildCostMantissa: 5
-  _buildCostExponent: 1
+  _buildCostExponent: 0
   _boxOpenDuration: 1
   _growDuration: 5
   _baseHarvestPriceMantissa: 10

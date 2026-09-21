@@ -38,6 +38,11 @@ namespace Farm.Worker
             _home = home;
         }
 
+        public void SetMoveSpeed(float speed)
+        {
+            if (_agent != null && speed > 0f) _agent.speed = speed;
+        }
+
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();

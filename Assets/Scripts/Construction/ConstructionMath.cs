@@ -10,9 +10,16 @@ namespace Farm.Construction
             return config.BaseHarvestPrice * config.GetProfitMultiplier(level);
         }
 
-        public static BigNumber CalculateHarvestPrice(CropConfig config, int level, float managementMultiplier)
+        /// <summary>Calculates harvest price combining a plot's own stat sheet (e.g. its level source) and the global stat sheet.</summary>
+        public static BigNumber CalculateHarvestPrice(CropConfig config, StatDefinition profitStat, StatSheet plotStats, StatSheet globalStats)
         {
-            return CalculateHarvestPrice(config, level) * managementMultiplier;
+            if (config == null) return BigNumber.Zero;
+            if (profitStat == null) return config.BaseHarvestPrice;
+
+            float plotMult = plotStats != null ? plotStats.Evaluate(profitStat, 1f, config) : 1f;
+            float globalMult = globalStats != null ? globalStats.Evaluate(profitStat, 1f, config) : 1f;
+
+            return config.BaseHarvestPrice * (double)(plotMult * globalMult);
         }
 
         public static BigNumber CalculateUpgradeCost(CropConfig config, int currentLevel)

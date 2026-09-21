@@ -6,15 +6,25 @@ using UnityEngine;
 
 namespace Farm.Upgrade
 {
-    /// <summary>Tracks which one-time <see cref="UpgradeEntry"/> purchases are owned and aggregates them into <see cref="IManagementBonuses"/> queries.</summary>
-    public sealed class UpgradeService : IManagementBonuses, ISaveable
+    /// <summary>
+    /// Tracks which one-time <see cref="UpgradeEntry"/> purchases are owned and pushes their effects into
+    /// <see cref="GameStats.Global"/>. TEMPORARY: still branches on <see cref="UpgradeType"/> as a translation
+    /// shim - a later pass replaces UpgradeEntry's type+amount with direct StatModifier data and removes this branch.
+    /// </summary>
+    public sealed class UpgradeService : ISaveable
     {
         private readonly UpgradeConfig _config;
         private readonly HashSet<string> _purchased = new HashSet<string>();
+        private readonly StatDefinition _cropProfitStat;
+        private readonly StatDefinition _customerCapacityStat;
+        private readonly StatDefinition _workerCountStat;
 
-        public UpgradeService(UpgradeConfig config)
+        public UpgradeService(UpgradeConfig config, StatDefinition cropProfitStat, StatDefinition customerCapacityStat, StatDefinition workerCountStat)
         {
             _config = config;
+            _cropProfitStat = cropProfitStat;
+            _customerCapacityStat = customerCapacityStat;
+            _workerCountStat = workerCountStat;
         }
 
         public event Action Changed;
@@ -29,39 +39,44 @@ namespace Farm.Upgrade
             if (!currency.TrySpend(entry.CostCurrency, entry.Cost)) return false;
 
             _purchased.Add(entry.Id);
+            ApplyToGameStats(entry);
             Changed?.Invoke();
             GameSaveService.Save();
             return true;
         }
 
-        public float GetCropProfitMultiplier(CropConfig crop)
+        private void ApplyToGameStats(UpgradeEntry entry)
         {
-            float multiplier = 1f;
-            foreach (UpgradeEntry entry in _config.Entries)
+            switch (entry.Type)
             {
-                if (!IsPurchased(entry)) continue;
+                case UpgradeType.SingleCropProfit:
+                    if (_cropProfitStat != null)
+                    {
+                        GameStats.Global.AddModifier(new StatModifier(_cropProfitStat, ModifierKind.Multiply, entry.EffectAmount, entry.TargetCrop), entry.Id);
+                    }
+                    break;
 
-                bool applies = entry.Type == UpgradeType.AllCropProfit
-                    || (entry.Type == UpgradeType.SingleCropProfit && entry.TargetCrop == crop);
-                if (applies) multiplier *= entry.EffectAmount;
+                case UpgradeType.AllCropProfit:
+                    if (_cropProfitStat != null)
+                    {
+                        GameStats.Global.AddModifier(new StatModifier(_cropProfitStat, ModifierKind.Multiply, entry.EffectAmount), entry.Id);
+                    }
+                    break;
+
+                case UpgradeType.AddCustomer:
+                    if (_customerCapacityStat != null)
+                    {
+                        GameStats.Global.AddModifier(new StatModifier(_customerCapacityStat, ModifierKind.Flat, entry.EffectAmount), entry.Id);
+                    }
+                    break;
+
+                case UpgradeType.AddWorker:
+                    if (_workerCountStat != null)
+                    {
+                        GameStats.Global.AddModifier(new StatModifier(_workerCountStat, ModifierKind.Flat, entry.EffectAmount), entry.Id);
+                    }
+                    break;
             }
-
-            return multiplier;
-        }
-
-        public int BonusCustomerCapacity => SumBonus(UpgradeType.AddCustomer);
-        public int BonusWorkers => SumBonus(UpgradeType.AddWorker);
-
-        private int SumBonus(UpgradeType type)
-        {
-            int total = 0;
-            foreach (UpgradeEntry entry in _config.Entries)
-            {
-                if (entry.Type != type || !IsPurchased(entry)) continue;
-                total += Mathf.RoundToInt(entry.EffectAmount);
-            }
-
-            return total;
         }
 
         public string CaptureState()
@@ -72,6 +87,12 @@ namespace Farm.Upgrade
 
         public void RestoreState(string json)
         {
+            // Entries may have been purchased in a previous session; clear their stat contributions before re-applying.
+            foreach (UpgradeEntry entry in _config.Entries)
+            {
+                GameStats.Global.RemoveModifiersFrom(entry.Id);
+            }
+
             _purchased.Clear();
             if (!string.IsNullOrEmpty(json))
             {
@@ -80,6 +101,11 @@ namespace Farm.Upgrade
                 {
                     foreach (string id in data.ids) _purchased.Add(id);
                 }
+            }
+
+            foreach (UpgradeEntry entry in _config.Entries)
+            {
+                if (IsPurchased(entry)) ApplyToGameStats(entry);
             }
 
             Changed?.Invoke();

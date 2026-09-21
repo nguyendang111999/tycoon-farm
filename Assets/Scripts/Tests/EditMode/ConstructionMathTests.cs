@@ -31,13 +31,30 @@ namespace Farm.Tests
         }
 
         [Test]
-        public void CalculateHarvestPrice_WithManagementMultiplier_ScalesResult()
+        public void CalculateHarvestPrice_WithStatSheets_CombinesPlotAndGlobalModifiers()
         {
             CropConfig config = CreateConfig();
-            BigNumber basePrice = ConstructionMath.CalculateHarvestPrice(config, 1);
-            BigNumber boostedPrice = ConstructionMath.CalculateHarvestPrice(config, 1, 2f);
+            StatDefinition profitStat = ScriptableObject.CreateInstance<StatDefinition>();
+            var plotStats = new StatSheet();
+            var globalStats = new StatSheet();
 
-            Assert.AreEqual(basePrice.ToDouble() * 2d, boostedPrice.ToDouble(), 1e-4);
+            try
+            {
+                // Plot level contributes x1.2 (via Multiply), global upgrade contributes +50% (via PercentAdd)
+                plotStats.AddModifier(new StatModifier(profitStat, ModifierKind.Multiply, 1.2f, config), "level");
+                globalStats.AddModifier(new StatModifier(profitStat, ModifierKind.PercentAdd, 0.5f), "upgrade");
+
+                BigNumber price = ConstructionMath.CalculateHarvestPrice(config, profitStat, plotStats, globalStats);
+
+                // Base 10 * 1.2 (plot) * 1.5 (global) = 18
+                double expected = config.BaseHarvestPrice.ToDouble() * 1.2d * 1.5d;
+                Assert.AreEqual(expected, price.ToDouble(), 1e-4);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(profitStat);
+                UnityEngine.Object.DestroyImmediate(config);
+            }
         }
 
         [Test]

@@ -18,6 +18,23 @@ namespace Farm.Tests
             return config;
         }
 
+        private static UpgradeService CreateService(UpgradeConfig config, StatDefinition cropProfit = null, StatDefinition customerCap = null, StatDefinition workerCount = null)
+        {
+            return new UpgradeService(config, cropProfit, customerCap, workerCount);
+        }
+
+        [SetUp]
+        public void SetUp()
+        {
+            GameStats.Global.Clear();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            GameStats.Global.Clear();
+        }
+
         [Test]
         public void Entry_Cost_MatchesMantissaAndExponent()
         {
@@ -30,7 +47,7 @@ namespace Farm.Tests
         public void TryPurchase_SpendsCurrencyAndMarksOwned()
         {
             var entry = new UpgradeEntry("all", UpgradeType.AllCropProfit, 2f, costMantissa: 1, costExponent: 2);
-            var service = new UpgradeService(CreateConfig(entry));
+            var service = CreateService(CreateConfig(entry));
             var currency = new CurrencyService();
             currency.Add(CurrencyType.Cash, new BigNumber(50));
 
@@ -48,7 +65,7 @@ namespace Farm.Tests
         public void TryPurchase_FailsWhenAlreadyOwned()
         {
             var entry = new UpgradeEntry("all", UpgradeType.AllCropProfit, 2f, costMantissa: 1, costExponent: 1);
-            var service = new UpgradeService(CreateConfig(entry));
+            var service = CreateService(CreateConfig(entry));
             var currency = new CurrencyService();
             currency.Add(CurrencyType.Cash, new BigNumber(1000));
 
@@ -57,66 +74,96 @@ namespace Farm.Tests
         }
 
         [Test]
-        public void GetCropProfitMultiplier_StacksAllAndSingleCropMultiplicatively()
+        public void TryPurchase_PushesCropProfitModifiersToGameStatsGlobal()
         {
             CropConfig tomato = ScriptableObject.CreateInstance<CropConfig>();
+            StatDefinition cropProfit = ScriptableObject.CreateInstance<StatDefinition>();
+
             try
             {
                 var allCropEntry = new UpgradeEntry("all", UpgradeType.AllCropProfit, 2f, costMantissa: 1, costExponent: 1);
                 var singleCropEntry = new UpgradeEntry("tomato", UpgradeType.SingleCropProfit, 5f, costMantissa: 3, costExponent: 1, targetCrop: tomato);
-                var service = new UpgradeService(CreateConfig(allCropEntry, singleCropEntry));
+                var service = CreateService(CreateConfig(allCropEntry, singleCropEntry), cropProfit: cropProfit);
                 var currency = new CurrencyService();
                 currency.Add(CurrencyType.Cash, new BigNumber(1000));
 
-                Assert.AreEqual(1f, service.GetCropProfitMultiplier(tomato), 1e-4f);
+                Assert.AreEqual(1f, GameStats.Global.Evaluate(cropProfit, 1f, tomato), 1e-4f);
 
                 service.TryPurchase(allCropEntry, currency);
                 service.TryPurchase(singleCropEntry, currency);
 
-                Assert.AreEqual(2f * 5f, service.GetCropProfitMultiplier(tomato), 1e-4f);
+                // Multipliers stack: 2 * 5 = 10
+                Assert.AreEqual(10f, GameStats.Global.Evaluate(cropProfit, 1f, tomato), 1e-4f);
             }
             finally
             {
+                Object.DestroyImmediate(cropProfit);
                 Object.DestroyImmediate(tomato);
             }
         }
 
         [Test]
-        public void BonusCustomerCapacityAndWorkers_SumPurchasedEntries()
+        public void TryPurchase_PushesCapacityAndWorkerModifiersToGameStatsGlobal()
         {
-            var customerEntryA = new UpgradeEntry("customerA", UpgradeType.AddCustomer, 1f, costMantissa: 1, costExponent: 1);
-            var customerEntryB = new UpgradeEntry("customerB", UpgradeType.AddCustomer, 2f, costMantissa: 1, costExponent: 1);
-            var workerEntry = new UpgradeEntry("worker", UpgradeType.AddWorker, 1f, costMantissa: 1, costExponent: 1);
-            var service = new UpgradeService(CreateConfig(customerEntryA, customerEntryB, workerEntry));
-            var currency = new CurrencyService();
-            currency.Add(CurrencyType.Cash, new BigNumber(1000));
+            StatDefinition customerCap = ScriptableObject.CreateInstance<StatDefinition>();
+            StatDefinition workerCount = ScriptableObject.CreateInstance<StatDefinition>();
 
-            service.TryPurchase(customerEntryA, currency);
-            service.TryPurchase(customerEntryB, currency);
-            service.TryPurchase(workerEntry, currency);
+            try
+            {
+                var customerEntryA = new UpgradeEntry("customerA", UpgradeType.AddCustomer, 1f, costMantissa: 1, costExponent: 1);
+                var customerEntryB = new UpgradeEntry("customerB", UpgradeType.AddCustomer, 2f, costMantissa: 1, costExponent: 1);
+                var workerEntry = new UpgradeEntry("worker", UpgradeType.AddWorker, 1f, costMantissa: 1, costExponent: 1);
+                var service = CreateService(CreateConfig(customerEntryA, customerEntryB, workerEntry), customerCap: customerCap, workerCount: workerCount);
+                var currency = new CurrencyService();
+                currency.Add(CurrencyType.Cash, new BigNumber(1000));
 
-            Assert.AreEqual(3, service.BonusCustomerCapacity);
-            Assert.AreEqual(1, service.BonusWorkers);
+                service.TryPurchase(customerEntryA, currency);
+                service.TryPurchase(customerEntryB, currency);
+                service.TryPurchase(workerEntry, currency);
+
+                // Starting from base 0, flat modifiers sum
+                Assert.AreEqual(3f, GameStats.Global.Evaluate(customerCap, 0f), 1e-4f);
+                Assert.AreEqual(1f, GameStats.Global.Evaluate(workerCount, 0f), 1e-4f);
+            }
+            finally
+            {
+                Object.DestroyImmediate(workerCount);
+                Object.DestroyImmediate(customerCap);
+            }
         }
 
         [Test]
-        public void SaveAndRestore_RoundTripsOwnedUpgrades()
+        public void SaveAndRestore_RoundTripsOwnedUpgradesAndReappliesModifiers()
         {
-            var entryA = new UpgradeEntry("a", UpgradeType.AllCropProfit, 2f, costMantissa: 1, costExponent: 1);
-            var entryB = new UpgradeEntry("b", UpgradeType.AddWorker, 1f, costMantissa: 1, costExponent: 1);
-            var config = CreateConfig(entryA, entryB);
-            var service = new UpgradeService(config);
-            var currency = new CurrencyService();
-            currency.Add(CurrencyType.Cash, new BigNumber(1000));
+            StatDefinition cropProfit = ScriptableObject.CreateInstance<StatDefinition>();
+            StatDefinition workerCount = ScriptableObject.CreateInstance<StatDefinition>();
 
-            service.TryPurchase(entryA, currency);
-            string saved = service.CaptureState();
+            try
+            {
+                var entryA = new UpgradeEntry("a", UpgradeType.AllCropProfit, 2f, costMantissa: 1, costExponent: 1);
+                var entryB = new UpgradeEntry("b", UpgradeType.AddWorker, 1f, costMantissa: 1, costExponent: 1);
+                var config = CreateConfig(entryA, entryB);
+                var service = CreateService(config, cropProfit: cropProfit, workerCount: workerCount);
+                var currency = new CurrencyService();
+                currency.Add(CurrencyType.Cash, new BigNumber(1000));
 
-            var restored = new UpgradeService(config);
-            restored.RestoreState(saved);
+                service.TryPurchase(entryA, currency);
+                string saved = service.CaptureState();
 
-            Assert.IsTrue(restored.IsPurchased(entryA));
-            Assert.IsFalse(restored.IsPurchased(entryB));
+                // Fresh service restoring from JSON should re-apply entryA's modifier to GameStats.Global
+                var restored = CreateService(config, cropProfit: cropProfit, workerCount: workerCount);
+                restored.RestoreState(saved);
+
+                Assert.IsTrue(restored.IsPurchased(entryA));
+                Assert.IsFalse(restored.IsPurchased(entryB));
+                Assert.AreEqual(2f, GameStats.Global.Evaluate(cropProfit, 1f), 1e-4f);
+                Assert.AreEqual(0f, GameStats.Global.Evaluate(workerCount, 0f), 1e-4f);
+            }
+            finally
+            {
+                Object.DestroyImmediate(workerCount);
+                Object.DestroyImmediate(cropProfit);
+            }
         }
     }
 }

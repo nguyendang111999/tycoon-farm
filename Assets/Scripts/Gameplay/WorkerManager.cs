@@ -18,7 +18,15 @@ namespace Farm.Gameplay
         [SerializeField] private int _workerCount = 1;
         [SerializeField] private float _matchInterval = 0.5f;
 
+        [Header("Stats")]
+        [SerializeField] private StatDefinition _workerCountStat;
+        [SerializeField] private StatDefinition _workerMoveSpeedStat;
+        [SerializeField] private float _baseMoveSpeed = 3.5f;
+
         private readonly List<Worker.Worker> _workers = new List<Worker.Worker>();
+
+        public StatDefinition WorkerMoveSpeedStat => _workerMoveSpeedStat;
+        public float BaseMoveSpeed => _baseMoveSpeed;
 
         private void Awake()
         {
@@ -27,18 +35,18 @@ namespace Farm.Gameplay
 
         private void Start()
         {
-            EnsureWorkerCount(_workerCount + ManagementBonuses.Current.BonusWorkers);
+            RefreshWorkerCount();
             StartCoroutine(MatchLoop());
         }
 
         private void OnEnable()
         {
-            ManagementBonuses.Current.Changed += HandleBonusesChanged;
+            GameStats.Global.Changed += HandleStatChanged;
         }
 
         private void OnDisable()
         {
-            ManagementBonuses.Current.Changed -= HandleBonusesChanged;
+            GameStats.Global.Changed -= HandleStatChanged;
         }
 
         private void OnDestroy()
@@ -52,9 +60,35 @@ namespace Farm.Gameplay
             }
         }
 
-        private void HandleBonusesChanged()
+        private void HandleStatChanged(StatDefinition stat)
         {
-            EnsureWorkerCount(_workerCount + ManagementBonuses.Current.BonusWorkers);
+            if (stat == _workerCountStat)
+            {
+                RefreshWorkerCount();
+            }
+            else if (stat == _workerMoveSpeedStat)
+            {
+                ApplySpeedToAllWorkers();
+            }
+        }
+
+        private void RefreshWorkerCount()
+        {
+            float target = _workerCountStat != null
+                ? GameStats.Global.Evaluate(_workerCountStat, _workerCount)
+                : _workerCount;
+            EnsureWorkerCount(Mathf.RoundToInt(target));
+        }
+
+        private void ApplySpeedToAllWorkers()
+        {
+            float speed = _workerMoveSpeedStat != null
+                ? GameStats.Global.Evaluate(_workerMoveSpeedStat, _baseMoveSpeed)
+                : _baseMoveSpeed;
+            foreach (Worker.Worker worker in _workers)
+            {
+                if (worker != null) worker.SetMoveSpeed(speed);
+            }
         }
 
         /// <summary>Spawns workers until the pool reaches targetCount; never removes existing workers.</summary>
@@ -73,6 +107,12 @@ namespace Farm.Gameplay
             GameObject instance = _workerPool.Rent(home.position, home.rotation);
             var worker = instance.GetComponent<Worker.Worker>();
             worker.Initialize(home);
+
+            float speed = _workerMoveSpeedStat != null
+                ? GameStats.Global.Evaluate(_workerMoveSpeedStat, _baseMoveSpeed)
+                : _baseMoveSpeed;
+            worker.SetMoveSpeed(speed);
+
             worker.OrderDelivered -= HandleWorkerOrderDelivered;
             worker.OrderDelivered += HandleWorkerOrderDelivered;
             _workers.Add(worker);

@@ -45,6 +45,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3206995024185995956, guid: 0a4c613b940c0cd43be6d1fdd309d16a, type: 3}
     - target: {fileID: 5493426642924695319, guid: cfcea1bef252c491e8f667d61a07da44, type: 3}
+      propertyPath: _cropProfitStat
+      value: 
+      objectReference: {fileID: 11400000, guid: 791d268d34edcf44c9ed785eff86e9e9, type: 2}
+    - target: {fileID: 5493426642924695319, guid: cfcea1bef252c491e8f667d61a07da44, type: 3}
+      propertyPath: _cropGrowSpeedStat
+      value: 
+      objectReference: {fileID: 11400000, guid: c3a85382cd58d9f4e89d0cd68896cdca, type: 2}
+    - target: {fileID: 5493426642924695319, guid: cfcea1bef252c491e8f667d61a07da44, type: 3}
       propertyPath: _stockAnchorRootName
       value: Point
       objectReference: {fileID: 0}
