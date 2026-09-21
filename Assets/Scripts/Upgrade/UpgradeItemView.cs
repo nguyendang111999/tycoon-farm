@@ -18,7 +18,7 @@ namespace Farm.Upgrade
         {
             if (_icon != null && entry.Icon != null) _icon.sprite = entry.Icon;
             if (_titleText != null) _titleText.text = entry.DisplayName;
-            if (_descriptionText != null) _descriptionText.text = DescribeEffect(entry);
+            if (_descriptionText != null) _descriptionText.text = DescribeEffects(entry);
             if (_costText != null) _costText.text = isPurchased ? "OWNED" : NumberFormatter.Format(entry.Cost);
 
             _buyButton.interactable = !isPurchased && canAfford;
@@ -26,21 +26,19 @@ namespace Farm.Upgrade
             if (!isPurchased) _buyButton.onClick.AddListener(() => onBuy());
         }
 
-        private static string DescribeEffect(UpgradeEntry entry)
+        private static string DescribeEffects(UpgradeEntry entry)
         {
-            switch (entry.Type)
+            if (entry.Effects == null || entry.Effects.Count == 0) return string.Empty;
+
+            var builder = new System.Text.StringBuilder();
+            for (int i = 0; i < entry.Effects.Count; i++)
             {
-                case UpgradeType.SingleCropProfit:
-                    return $"x{entry.EffectAmount:0.##} profit for {(entry.TargetCrop != null ? entry.TargetCrop.DisplayName : "?")}";
-                case UpgradeType.AllCropProfit:
-                    return $"x{entry.EffectAmount:0.##} profit for all crops";
-                case UpgradeType.AddCustomer:
-                    return $"+{entry.EffectAmount:0} customer capacity";
-                case UpgradeType.AddWorker:
-                    return $"+{entry.EffectAmount:0} worker";
-                default:
-                    return string.Empty;
+                if (i > 0) builder.Append(", ");
+                builder.Append(StatModifierFormatter.Describe(entry.Effects[i]));
             }
+
+            return builder.ToString();
         }
     }
 }
+

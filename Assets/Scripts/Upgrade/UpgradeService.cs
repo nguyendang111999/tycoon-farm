@@ -6,25 +6,15 @@ using UnityEngine;
 
 namespace Farm.Upgrade
 {
-    /// <summary>
-    /// Tracks which one-time <see cref="UpgradeEntry"/> purchases are owned and pushes their effects into
-    /// <see cref="GameStats.Global"/>. TEMPORARY: still branches on <see cref="UpgradeType"/> as a translation
-    /// shim - a later pass replaces UpgradeEntry's type+amount with direct StatModifier data and removes this branch.
-    /// </summary>
+    /// <summary>Tracks which one-time <see cref="UpgradeEntry"/> purchases are owned and registers/removes their StatModifiers in <see cref="GameStats.Global"/>.</summary>
     public sealed class UpgradeService : ISaveable
     {
         private readonly UpgradeConfig _config;
         private readonly HashSet<string> _purchased = new HashSet<string>();
-        private readonly StatDefinition _cropProfitStat;
-        private readonly StatDefinition _customerCapacityStat;
-        private readonly StatDefinition _workerCountStat;
 
-        public UpgradeService(UpgradeConfig config, StatDefinition cropProfitStat, StatDefinition customerCapacityStat, StatDefinition workerCountStat)
+        public UpgradeService(UpgradeConfig config)
         {
             _config = config;
-            _cropProfitStat = cropProfitStat;
-            _customerCapacityStat = customerCapacityStat;
-            _workerCountStat = workerCountStat;
         }
 
         public event Action Changed;
@@ -39,43 +29,17 @@ namespace Farm.Upgrade
             if (!currency.TrySpend(entry.CostCurrency, entry.Cost)) return false;
 
             _purchased.Add(entry.Id);
-            ApplyToGameStats(entry);
+            ApplyEffects(entry);
             Changed?.Invoke();
             GameSaveService.Save();
             return true;
         }
 
-        private void ApplyToGameStats(UpgradeEntry entry)
+        private static void ApplyEffects(UpgradeEntry entry)
         {
-            switch (entry.Type)
+            foreach (StatModifier modifier in entry.Effects)
             {
-                case UpgradeType.SingleCropProfit:
-                    if (_cropProfitStat != null)
-                    {
-                        GameStats.Global.AddModifier(new StatModifier(_cropProfitStat, ModifierKind.Multiply, entry.EffectAmount, entry.TargetCrop), entry.Id);
-                    }
-                    break;
-
-                case UpgradeType.AllCropProfit:
-                    if (_cropProfitStat != null)
-                    {
-                        GameStats.Global.AddModifier(new StatModifier(_cropProfitStat, ModifierKind.Multiply, entry.EffectAmount), entry.Id);
-                    }
-                    break;
-
-                case UpgradeType.AddCustomer:
-                    if (_customerCapacityStat != null)
-                    {
-                        GameStats.Global.AddModifier(new StatModifier(_customerCapacityStat, ModifierKind.Flat, entry.EffectAmount), entry.Id);
-                    }
-                    break;
-
-                case UpgradeType.AddWorker:
-                    if (_workerCountStat != null)
-                    {
-                        GameStats.Global.AddModifier(new StatModifier(_workerCountStat, ModifierKind.Flat, entry.EffectAmount), entry.Id);
-                    }
-                    break;
+                GameStats.Global.AddModifier(modifier, entry.Id);
             }
         }
 
@@ -105,7 +69,7 @@ namespace Farm.Upgrade
 
             foreach (UpgradeEntry entry in _config.Entries)
             {
-                if (IsPurchased(entry)) ApplyToGameStats(entry);
+                if (IsPurchased(entry)) ApplyEffects(entry);
             }
 
             Changed?.Invoke();
