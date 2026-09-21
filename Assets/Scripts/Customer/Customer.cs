@@ -11,7 +11,59 @@ namespace Farm.Customer
     [RequireComponent(typeof(NavMeshAgent))]
     public sealed class Customer : MonoBehaviour, IOrder
     {
-        private enum CustomerState { MovingToDock, Waiting, Leaving }
+        private sealed class MovingToDockState : IState<Customer>
+        {
+            public void Enter(Customer c)
+            {
+                c._agent.updateRotation = true;
+                if (c.AssignedSlot != null) c._agent.SetDestination(c.AssignedSlot.WaitPoint.position);
+                c.SetLocomotion(moving: true, carrying: false);
+            }
+
+            public void Tick(Customer c)
+            {
+                if (c.HasArrived()) c._fsm.ChangeState(c._waitingState);
+            }
+
+            public void Exit(Customer c) { }
+        }
+
+        private sealed class WaitingState : IState<Customer>
+        {
+            public void Enter(Customer c)
+            {
+                if (c._orderCanvas != null) c._orderCanvas.enabled = true;
+                c.SetLocomotion(moving: false, carrying: false);
+
+                // Face the dock's authored orientation instead of whatever direction we arrived from.
+                c._agent.updateRotation = false;
+                if (c.AssignedSlot != null) c.transform.rotation = c.AssignedSlot.WaitPoint.rotation;
+            }
+
+            public void Tick(Customer c) { }
+
+            public void Exit(Customer c)
+            {
+                if (c._orderCanvas != null) c._orderCanvas.enabled = false;
+            }
+        }
+
+        private sealed class LeavingState : IState<Customer>
+        {
+            public void Enter(Customer c)
+            {
+                c._agent.updateRotation = true;
+                if (c._exitPoint != null) c._agent.SetDestination(c._exitPoint.position);
+                c.SetLocomotion(moving: true, carrying: true);
+            }
+
+            public void Tick(Customer c)
+            {
+                if (c.HasArrived()) CustomerManager.Instance.OnCustomerReachedExit(c);
+            }
+
+            public void Exit(Customer c) { }
+        }
 
         private static readonly int IsMoveHash = Animator.StringToHash("IsMove");
         private static readonly int IsCarryHash = Animator.StringToHash("IsCarry");
@@ -23,17 +75,20 @@ namespace Farm.Customer
         [SerializeField] private Transform _carryAnchor;
         [SerializeField] private PrefabPool _payEffectPool;
 
-        private CarryVisualController _carryVisuals;
+        private readonly MovingToDockState _movingToDockState = new MovingToDockState();
+        private readonly WaitingState _waitingState = new WaitingState();
+        private readonly LeavingState _leavingState = new LeavingState();
 
+        private StateMachine<Customer> _fsm;
+        private CarryVisualController _carryVisuals;
         private NavMeshAgent _agent;
-        private CustomerState _state;
         private Transform _exitPoint;
 
         public CropConfig RequestedCrop { get; private set; }
         public int RequestedQuantity { get; private set; }
         public DockSlot AssignedSlot { get; private set; }
         public bool IsClaimed { get; private set; }
-        public bool IsWaiting => _state == CustomerState.Waiting;
+        public bool IsWaiting => _fsm != null && _fsm.CurrentState == _waitingState;
         public Transform DeliveryPoint => AssignedSlot != null ? AssignedSlot.DeliveryPoint : null;
 
         Vector3 IOrder.DeliveryPosition => DeliveryPoint.position;
@@ -49,6 +104,7 @@ namespace Farm.Customer
             }
 
             _carryVisuals = new CarryVisualController(_carryAnchor);
+            _fsm = new StateMachine<Customer>(this);
         }
 
         public void Initialize(CropConfig requestedCrop, int quantity, DockSlot slot, Transform exitPoint)
@@ -60,34 +116,18 @@ namespace Farm.Customer
             IsClaimed = false;
             _carryVisuals.Hide();
 
-            _orderCanvas.enabled = false;
+            if (_orderCanvas != null) _orderCanvas.enabled = false;
             if (_imgIcon != null) _imgIcon.sprite = requestedCrop.Icon;
             if (_orderText != null) _orderText.text = $"x{quantity}";
 
             // Pooled agents can go stale relative to their new transform; Warp re-syncs them onto the NavMesh.
             _agent.Warp(transform.position);
-            _agent.updateRotation = true;
-            _agent.SetDestination(slot.WaitPoint.position);
-            _state = CustomerState.MovingToDock;
-            SetLocomotion(moving: true, carrying: false);
+            _fsm.ChangeState(_movingToDockState);
         }
 
         private void Update()
         {
-            if (_state == CustomerState.MovingToDock && HasArrived())
-            {
-                _state = CustomerState.Waiting;
-                _orderCanvas.enabled = true;
-                SetLocomotion(moving: false, carrying: false);
-
-                // Face the dock's authored orientation instead of whatever direction we arrived from.
-                _agent.updateRotation = false;
-                transform.rotation = AssignedSlot.WaitPoint.rotation;
-            }
-            else if (_state == CustomerState.Leaving && HasArrived())
-            {
-                CustomerManager.Instance.OnCustomerReachedExit(this);
-            }
+            _fsm.Tick();
         }
 
         private bool HasArrived()
@@ -118,7 +158,7 @@ namespace Farm.Customer
 
         public bool TryFulfillOrder(CropConfig deliveredCrop, GameObject productPrefab, BigNumber payout)
         {
-            if (_state != CustomerState.Waiting || deliveredCrop != RequestedCrop) return false;
+            if (!IsWaiting || deliveredCrop != RequestedCrop) return false;
 
             MoneyManager.Instance.Currency.Add(CurrencyType.Cash, payout);
 
@@ -129,11 +169,7 @@ namespace Farm.Customer
             }
 
             _carryVisuals.Show(productPrefab, RequestedQuantity);
-            _state = CustomerState.Leaving;
-            _orderCanvas.enabled = false;
-            _agent.updateRotation = true;
-            _agent.SetDestination(_exitPoint.position);
-            SetLocomotion(moving: true, carrying: true);
+            _fsm.ChangeState(_leavingState);
             return true;
         }
 

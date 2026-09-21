@@ -8,7 +8,81 @@ namespace Farm.Worker
     [RequireComponent(typeof(NavMeshAgent))]
     public sealed class Worker : MonoBehaviour
     {
-        private enum WorkerState { Idle, ToSupplier, Collecting, ToOrder, Returning }
+        private sealed class IdleState : IState<Worker>
+        {
+            public void Enter(Worker w)
+            {
+                w._agent.ResetPath();
+                if (w._home != null) w.transform.rotation = w._home.rotation;
+                w.SetLocomotion(moving: false, carrying: false);
+            }
+
+            public void Tick(Worker w) { }
+            public void Exit(Worker w) { }
+        }
+
+        private sealed class ToSupplierState : IState<Worker>
+        {
+            public void Enter(Worker w)
+            {
+                if (w._supplier != null) w._agent.SetDestination(w._supplier.PickupPosition);
+                w.SetLocomotion(moving: true, carrying: false);
+            }
+
+            public void Tick(Worker w)
+            {
+                if (w.HasArrived()) w._fsm.ChangeState(w._collectingState);
+            }
+
+            public void Exit(Worker w) { }
+        }
+
+        private sealed class CollectingState : IState<Worker>
+        {
+            public void Enter(Worker w)
+            {
+                w.CollectAvailableStock();
+            }
+
+            public void Tick(Worker w)
+            {
+                w.CollectAvailableStock();
+            }
+
+            public void Exit(Worker w) { }
+        }
+
+        private sealed class ToOrderState : IState<Worker>
+        {
+            public void Enter(Worker w)
+            {
+                if (w._order != null) w._agent.SetDestination(w._order.DeliveryPosition);
+                w.SetLocomotion(moving: true, carrying: true);
+            }
+
+            public void Tick(Worker w)
+            {
+                if (w.HasArrived()) w.HandleArrivedAtOrder();
+            }
+
+            public void Exit(Worker w) { }
+        }
+
+        private sealed class ReturningState : IState<Worker>
+        {
+            public void Enter(Worker w)
+            {
+                if (w._home != null) w._agent.SetDestination(w._home.position);
+                w.SetLocomotion(moving: true, carrying: false);
+            }
+
+            public void Tick(Worker w)
+            {
+                if (w.HasArrived()) w._fsm.ChangeState(w._idleState);
+            }
+
+            public void Exit(Worker w) { }
+        }
 
         private static readonly int IsMoveHash = Animator.StringToHash("IsMove");
         private static readonly int IsCarryHash = Animator.StringToHash("IsCarry");
@@ -16,10 +90,15 @@ namespace Farm.Worker
         [SerializeField] private Animator _animator;
         [SerializeField] private Transform _carryAnchor;
 
-        private CarryVisualController _carryVisuals;
+        private readonly IdleState _idleState = new IdleState();
+        private readonly ToSupplierState _toSupplierState = new ToSupplierState();
+        private readonly CollectingState _collectingState = new CollectingState();
+        private readonly ToOrderState _toOrderState = new ToOrderState();
+        private readonly ReturningState _returningState = new ReturningState();
 
+        private StateMachine<Worker> _fsm;
+        private CarryVisualController _carryVisuals;
         private NavMeshAgent _agent;
-        private WorkerState _state = WorkerState.Idle;
         private Transform _home;
         private ISupplier _supplier;
         private IOrder _order;
@@ -28,9 +107,9 @@ namespace Farm.Worker
 
         public event System.Action<Worker> OrderDelivered;
 
-        public bool IsIdle => _state == WorkerState.Idle;
-        public bool IsReturning => _state == WorkerState.Returning;
-        public bool CanAcceptJob => _state == WorkerState.Idle || _state == WorkerState.Returning;
+        public bool IsIdle => _fsm != null && _fsm.CurrentState == _idleState;
+        public bool IsReturning => _fsm != null && _fsm.CurrentState == _returningState;
+        public bool CanAcceptJob => IsIdle || IsReturning;
         public Transform Home => _home;
 
         public void SetHome(Transform home)
@@ -46,19 +125,20 @@ namespace Farm.Worker
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
+            if (_agent != null && _agent.stoppingDistance < 0.25f) _agent.stoppingDistance = 0.25f;
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
             _carryVisuals = new CarryVisualController(_carryAnchor);
+            _fsm = new StateMachine<Worker>(this);
         }
 
         public void Initialize(Transform home)
         {
             _home = home;
             _agent.Warp(home.position);
-            _state = WorkerState.Idle;
             _collectedCount = 0;
             _payout = BigNumber.Zero;
             _carryVisuals.Hide();
-            SetLocomotion(moving: false, carrying: false);
+            _fsm.ChangeState(_idleState);
         }
 
         public void AssignJob(ISupplier supplier, IOrder order)
@@ -69,41 +149,12 @@ namespace Farm.Worker
             _payout = BigNumber.Zero;
             _carryVisuals.Hide();
 
-            _agent.SetDestination(supplier.PickupPosition);
-            _state = WorkerState.ToSupplier;
-            SetLocomotion(moving: true, carrying: false);
+            _fsm.ChangeState(_toSupplierState);
         }
 
         private void Update()
         {
-            switch (_state)
-            {
-                case WorkerState.ToSupplier:
-                    if (HasArrived())
-                    {
-                        _state = WorkerState.Collecting;
-                        CollectAvailableStock();
-                    }
-                    break;
-
-                case WorkerState.Collecting:
-                    CollectAvailableStock();
-                    break;
-
-                case WorkerState.ToOrder:
-                    if (HasArrived()) HandleArrivedAtOrder();
-                    break;
-
-                case WorkerState.Returning:
-                    if (HasArrived())
-                    {
-                        _state = WorkerState.Idle;
-                        _agent.ResetPath();
-                        if (_home != null) transform.rotation = _home.rotation;
-                        SetLocomotion(moving: false, carrying: false);
-                    }
-                    break;
-            }
+            _fsm.Tick();
         }
 
         private void CollectAvailableStock()
@@ -146,9 +197,7 @@ namespace Farm.Worker
                 _supplier.ReleaseClaim();
             }
 
-            _agent.SetDestination(_order.DeliveryPosition);
-            _state = WorkerState.ToOrder;
-            SetLocomotion(moving: true, carrying: true);
+            _fsm.ChangeState(_toOrderState);
         }
 
         private void HandleArrivedAtOrder()
@@ -166,15 +215,9 @@ namespace Farm.Worker
 
             OrderDelivered?.Invoke(this);
 
-            if (_state == WorkerState.ToSupplier) return;
+            if (_fsm.CurrentState == _toSupplierState) return;
 
-            if (_home != null)
-            {
-                _agent.SetDestination(_home.position);
-            }
-
-            _state = WorkerState.Returning;
-            SetLocomotion(moving: true, carrying: false);
+            _fsm.ChangeState(_returningState);
         }
 
         private void ReturnHome()
@@ -195,13 +238,7 @@ namespace Farm.Worker
             _payout = BigNumber.Zero;
             _carryVisuals.Hide();
 
-            if (_home != null)
-            {
-                _agent.SetDestination(_home.position);
-            }
-
-            _state = WorkerState.Returning;
-            SetLocomotion(moving: true, carrying: false);
+            _fsm.ChangeState(_returningState);
         }
 
         private bool HasArrived()
