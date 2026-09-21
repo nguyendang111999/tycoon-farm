@@ -156,8 +156,9 @@ MonoBehaviour:
   _buildIcon: {fileID: 4617287764776342985}
   _upgradeViewRoot: {fileID: 6181457830924259296}
   _upgradeLevelText: {fileID: 8232828842135205406}
+  _curProfitText: {fileID: 0}
   _upgradeProductText: {fileID: 8819521540230109025}
-  _upgradeCostText: {fileID: 6126381967006897649}
+  _upgradeCostText: {fileID: 5947477458733897012}
   _upgradeProgressSlider: {fileID: 2174373062931244164}
   _upgradeButton: {fileID: 721670582303611374}
   _upgradeMaxState: {fileID: 7661536584112988301}
@@ -420,9 +421,9 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1201501036871561121, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
   m_PrefabInstance: {fileID: 2549714498316428150}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6126381967006897649 stripped
+--- !u!114 &5947477458733897012 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8531823355435579015, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8208875674965538370, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
   m_PrefabInstance: {fileID: 2549714498316428150}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

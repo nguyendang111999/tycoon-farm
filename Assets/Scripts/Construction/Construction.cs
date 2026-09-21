@@ -150,6 +150,10 @@ namespace Farm.Construction
 
         private void OnMouseDown()
         {
+            // OnMouseDown is not reliably suppressed by uGUI on touch devices, so a tap on a popup above the plot
+            // would otherwise re-open (and reparent) the popup out from under the finger.
+            if (PointerInput.IsOverUI()) return;
+
             if (_state == PlotState.Empty) ConstructionUIController.Instance?.ShowBuildView(this);
             else ConstructionUIController.Instance?.ShowUpgradeView(this);
         }

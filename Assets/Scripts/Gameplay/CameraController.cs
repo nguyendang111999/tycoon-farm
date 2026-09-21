@@ -1,5 +1,5 @@
+using Farm.Core;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Farm.Gameplay
 {
@@ -53,10 +53,10 @@ namespace Farm.Gameplay
         private void HandleInput()
         {
             // 1. Check for pointer down (touch or mouse)
-            if (TryGetPointerDown(out Vector3 pointerScreenPos))
+            if (PointerInput.TryGetDown(out Vector3 pointerScreenPos))
             {
                 // Disregard clicks initiated over UI elements
-                if (IsPointerOverUI()) return;
+                if (PointerInput.IsOverUI()) return;
 
                 if (TryGetGroundIntersection(pointerScreenPos, out Vector3 worldHit))
                 {
@@ -72,7 +72,7 @@ namespace Farm.Gameplay
             // 2. Handle active dragging
             if (_isDragging)
             {
-                if (TryGetPointerPosition(out Vector3 currentScreenPos))
+                if (PointerInput.TryGetPosition(out Vector3 currentScreenPos))
                 {
                     if (!_hasExceededThreshold)
                     {
@@ -101,7 +101,7 @@ namespace Farm.Gameplay
                 }
 
                 // 3. Check for pointer release
-                if (TryGetPointerUp())
+                if (PointerInput.TryGetUp())
                 {
                     _isDragging = false;
                 }
@@ -143,67 +143,6 @@ namespace Farm.Gameplay
             position.x = Mathf.Clamp(position.x, _minBounds.x, _maxBounds.x);
             position.z = Mathf.Clamp(position.z, _minBounds.y, _maxBounds.y);
             return position;
-        }
-
-        private static bool IsPointerOverUI()
-        {
-            if (EventSystem.current == null) return false;
-
-            if (Input.touchCount > 0)
-            {
-                return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
-            }
-
-            return EventSystem.current.IsPointerOverGameObject();
-        }
-
-        private static bool TryGetPointerDown(out Vector3 position)
-        {
-            if (Input.touchCount > 0)
-            {
-                Touch t = Input.GetTouch(0);
-                if (t.phase == TouchPhase.Began)
-                {
-                    position = t.position;
-                    return true;
-                }
-            }
-            else if (Input.GetMouseButtonDown(0))
-            {
-                position = Input.mousePosition;
-                return true;
-            }
-
-            position = Vector3.zero;
-            return false;
-        }
-
-        private static bool TryGetPointerPosition(out Vector3 position)
-        {
-            if (Input.touchCount > 0)
-            {
-                position = Input.GetTouch(0).position;
-                return true;
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                position = Input.mousePosition;
-                return true;
-            }
-
-            position = Vector3.zero;
-            return false;
-        }
-
-        private static bool TryGetPointerUp()
-        {
-            if (Input.touchCount > 0)
-            {
-                TouchPhase phase = Input.GetTouch(0).phase;
-                return phase == TouchPhase.Ended || phase == TouchPhase.Canceled;
-            }
-
-            return Input.GetMouseButtonUp(0);
         }
 
         private void OnDrawGizmosSelected()

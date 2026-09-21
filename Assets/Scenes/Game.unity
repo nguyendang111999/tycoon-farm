@@ -571,6 +571,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 722456803}
     m_Modifications:
+    - target: {fileID: 1316923315572121998, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3153459173032504633, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -611,9 +615,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5906711859632965900, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7541503423789126762, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
       propertyPath: m_Name
       value: ConstructionUIConstroller
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683738436410796149, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8933966924995613185, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8933966924995613185, guid: 09b493274b459e248bada46126d4f2d3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

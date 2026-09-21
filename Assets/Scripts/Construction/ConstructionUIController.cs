@@ -2,7 +2,6 @@ using Farm.Core;
 using Farm.Money;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Farm.Construction
@@ -26,6 +25,7 @@ namespace Farm.Construction
         [Header("Upgrade View")]
         [SerializeField] private GameObject _upgradeViewRoot;
         [SerializeField] private TMP_Text _upgradeLevelText;
+        [SerializeField] private TMP_Text _curProfitText;
         [SerializeField] private TMP_Text _upgradeProductText;
         [SerializeField] private TMP_Text _upgradeCostText;
         [SerializeField] private Slider _upgradeProgressSlider;
@@ -36,6 +36,7 @@ namespace Farm.Construction
         private ICurrencyService _currency;
         private CropPlot _active;
         private bool _suppressCloseThisFrame;
+        private bool _pressStartedOutsideUI;
         private Transform _buildViewHomeParent;
         private Transform _upgradeViewHomeParent;
 
@@ -159,8 +160,16 @@ namespace Farm.Construction
             bool anyOpen = _buildViewRoot.activeSelf || _upgradeViewRoot.activeSelf;
             if (!anyOpen) return;
 
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+            if (PointerInput.TryGetDown(out _))
             {
+                _pressStartedOutsideUI = !PointerInput.IsOverUI();
+            }
+
+            // Close on release, never on press: a uGUI Button only fires its click on pointer-up, so tearing the
+            // popup down on pointer-down would swallow every tap on its own buttons.
+            if (_pressStartedOutsideUI && PointerInput.TryGetUp())
+            {
+                _pressStartedOutsideUI = false;
                 HideBuildView();
                 HideUpgradeView();
             }
