@@ -7,7 +7,7 @@ namespace Farm.Construction
     {
         public static BigNumber CalculateHarvestPrice(CropConfig config, int level)
         {
-            return new BigNumber(config.BaseHarvestPrice) * config.GetProfitMultiplier(level);
+            return config.BaseHarvestPrice * config.GetProfitMultiplier(level);
         }
 
         public static BigNumber CalculateHarvestPrice(CropConfig config, int level, float managementMultiplier)

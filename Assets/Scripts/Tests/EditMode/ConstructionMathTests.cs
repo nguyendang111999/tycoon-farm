@@ -26,8 +26,8 @@ namespace Farm.Tests
             BigNumber priceAtLevel1 = ConstructionMath.CalculateHarvestPrice(config, 1);
             BigNumber priceAtLevel3 = ConstructionMath.CalculateHarvestPrice(config, 3);
 
-            Assert.AreEqual(config.BaseHarvestPrice, priceAtLevel1.ToDouble(), 1e-6);
-            Assert.AreEqual(config.BaseHarvestPrice * 1.2d, priceAtLevel3.ToDouble(), 1e-4);
+            Assert.AreEqual(config.BaseHarvestPrice.ToDouble(), priceAtLevel1.ToDouble(), 1e-6);
+            Assert.AreEqual(config.BaseHarvestPrice.ToDouble() * 1.2d, priceAtLevel3.ToDouble(), 1e-4);
         }
 
         [Test]

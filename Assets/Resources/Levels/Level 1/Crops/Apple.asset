@@ -15,10 +15,12 @@ MonoBehaviour:
   _cropId: apple
   _displayName: Apple
   _icon: {fileID: 21300000, guid: 06109b14ae47608409942bd117edb5dc, type: 3}
-  _buildCost: 500
+  _buildCostMantissa: 5
+  _buildCostExponent: 1
   _boxOpenDuration: 1
   _growDuration: 8
-  _baseHarvestPrice: 100
+  _baseHarvestPriceMantissa: 1
+  _baseHarvestPriceExponent: 9
   _maxStock: 3
   _maxLevel: 10
   _profitMultiplierByLevel:
@@ -45,5 +47,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _baseUpgradeCost: 1000
+  _baseUpgradeCostMantissa: 1
+  _baseUpgradeCostExponent: 2
   _upgradeCostGrowthRate: 1.3

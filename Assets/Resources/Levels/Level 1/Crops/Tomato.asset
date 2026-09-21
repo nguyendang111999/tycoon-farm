@@ -15,10 +15,12 @@ MonoBehaviour:
   _cropId: tomato
   _displayName: Tomato
   _icon: {fileID: 21300000, guid: cb407a551c1101c42bc60d46941acc45, type: 3}
-  _buildCost: 5
+  _buildCostMantissa: 5
+  _buildCostExponent: 1
   _boxOpenDuration: 1
   _growDuration: 5
-  _baseHarvestPrice: 10
+  _baseHarvestPriceMantissa: 10
+  _baseHarvestPriceExponent: 1
   _maxStock: 3
   _maxLevel: 10
   _profitMultiplierByLevel:
@@ -45,5 +47,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _baseUpgradeCost: 100
+  _baseUpgradeCostMantissa: 1
+  _baseUpgradeCostExponent: 2
   _upgradeCostGrowthRate: 1.3

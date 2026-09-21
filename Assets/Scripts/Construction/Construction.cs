@@ -56,7 +56,7 @@ namespace Farm.Construction
         public Transform UITarget => _uiTarget;
         public GameObject ProductPrefab => _productPrefab;
         public bool IsBuilt => _state == PlotState.Built;
-        public BigNumber BuildCost => new BigNumber(_config.BuildCost);
+        public BigNumber BuildCost => _config.BuildCost;
         public int Level => _level;
         public int Stock => _stock;
         public int AvailableStock => _stock;
