@@ -18,26 +18,12 @@ namespace Farm.Upgrade
         {
             if (_icon != null && entry.Icon != null) _icon.sprite = entry.Icon;
             if (_titleText != null) _titleText.text = entry.DisplayName;
-            if (_descriptionText != null) _descriptionText.text = DescribeEffects(entry);
+            if (_descriptionText != null) _descriptionText.text = entry.Description;
             if (_costText != null) _costText.text = isPurchased ? "OWNED" : NumberFormatter.Format(entry.Cost);
 
             _buyButton.interactable = !isPurchased && canAfford;
             _buyButton.onClick.RemoveAllListeners();
             if (!isPurchased) _buyButton.onClick.AddListener(() => onBuy());
-        }
-
-        private static string DescribeEffects(UpgradeEntry entry)
-        {
-            if (entry.Effects == null || entry.Effects.Count == 0) return string.Empty;
-
-            var builder = new System.Text.StringBuilder();
-            for (int i = 0; i < entry.Effects.Count; i++)
-            {
-                if (i > 0) builder.Append(", ");
-                builder.Append(StatModifierFormatter.Describe(entry.Effects[i]));
-            }
-
-            return builder.ToString();
         }
     }
 }

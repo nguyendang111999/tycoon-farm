@@ -13,6 +13,7 @@ namespace Farm.Upgrade
         [Header("Identity")]
         [SerializeField] private string _id = "upgrade";
         [SerializeField] private string _displayName = "Upgrade";
+        [SerializeField] private string _description = string.Empty;
         [SerializeField] private Sprite _icon;
 
         [Header("Cost")]
@@ -36,7 +37,8 @@ namespace Farm.Upgrade
             double costMantissa = 1d,
             int costExponent = 2,
             CurrencyType costCurrency = CurrencyType.Cash,
-            string displayName = null)
+            string displayName = null,
+            string description = null)
         {
             _id = id;
             _effects = effects ?? new StatModifier[0];
@@ -44,10 +46,12 @@ namespace Farm.Upgrade
             _costExponent = costExponent;
             _costCurrency = costCurrency;
             _displayName = displayName ?? id;
+            _description = description ?? "";
         }
 
         public string Id => _id;
         public string DisplayName => _displayName;
+        public string Description => _description;
         public Sprite Icon => _icon;
         public CurrencyType CostCurrency => _costCurrency;
         public IReadOnlyList<StatModifier> Effects => _effects;

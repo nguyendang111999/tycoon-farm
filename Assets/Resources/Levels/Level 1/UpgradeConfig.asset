@@ -15,6 +15,7 @@ MonoBehaviour:
   _entries:
   - _id: Profit_Construction_1
     _displayName: Tomato revenue x2
+    _description: Tomato revenue x2
     _icon: {fileID: 21300000, guid: cb407a551c1101c42bc60d46941acc45, type: 3}
     _costCurrency: 0
     _costMantissa: 1
@@ -26,6 +27,7 @@ MonoBehaviour:
       _cropFilter: {fileID: 11400000, guid: eb033c6c4fc96774ba402666ee825231, type: 2}
   - _id: Add_Customer
     _displayName: Add 1 customer
+    _description: Customer +1
     _icon: {fileID: 21300000, guid: 4544ffb4d02b34231a4f6e675469a7b7, type: 3}
     _costCurrency: 0
     _costMantissa: 10
@@ -35,19 +37,9 @@ MonoBehaviour:
       _kind: 0
       _value: 1
       _cropFilter: {fileID: 0}
-  - _id: Add_Worker_1
-    _displayName: +1 worker
-    _icon: {fileID: 21300000, guid: 12a5ec8afff2ccd4282e49d6a00c5d6f, type: 3}
-    _costCurrency: 0
-    _costMantissa: 50
-    _costExponent: 0
-    _effects:
-    - _stat: {fileID: 11400000, guid: 61b551a044d450447bf66227940b71f9, type: 2}
-      _kind: 0
-      _value: 1
-      _cropFilter: {fileID: 0}
   - _id: Profit_Construction_2
     _displayName: Cabbage revenue x2
+    _description: Cabbage revenue x2
     _icon: {fileID: 21300000, guid: ae305419818e0db4b8faaf25790198a8, type: 3}
     _costCurrency: 0
     _costMantissa: 100
@@ -59,6 +51,7 @@ MonoBehaviour:
       _cropFilter: {fileID: 11400000, guid: d33acdc947a05e64a913a5e36c0ca934, type: 2}
   - _id: Profit_Construction_3
     _displayName: Banana profit x2
+    _description: Banana profit x2
     _icon: {fileID: 21300000, guid: d8572ecd8759c4f47b041e6bcf57fe35, type: 3}
     _costCurrency: 0
     _costMantissa: 1
@@ -70,6 +63,7 @@ MonoBehaviour:
       _cropFilter: {fileID: 11400000, guid: 8311450af1e556e4cb82173b2ff430f6, type: 2}
   - _id: Profit_Construction_4
     _displayName: Apple profit x2
+    _description: Apple profit x2
     _icon: {fileID: 21300000, guid: 06109b14ae47608409942bd117edb5dc, type: 3}
     _costCurrency: 0
     _costMantissa: 10
@@ -81,6 +75,7 @@ MonoBehaviour:
       _cropFilter: {fileID: 11400000, guid: 22baa5d54054bac48b67110d7d59b931, type: 2}
   - _id: Profit_Construction_All
     _displayName: x2 all profit
+    _description: x2 all profit
     _icon: {fileID: 21300000, guid: ccd09cdcfe062884e965923a228f88a7, type: 3}
     _costCurrency: 0
     _costMantissa: 100
@@ -104,6 +99,7 @@ MonoBehaviour:
       _cropFilter: {fileID: 11400000, guid: 22baa5d54054bac48b67110d7d59b931, type: 2}
   - _id: Add_Worker
     _displayName: +1 worker
+    _description: Worker +1
     _icon: {fileID: 21300000, guid: 12a5ec8afff2ccd4282e49d6a00c5d6f, type: 3}
     _costCurrency: 0
     _costMantissa: 1
