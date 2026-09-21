@@ -3,6 +3,7 @@ using Farm.Money;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 namespace Farm.Customer
 {
@@ -16,6 +17,7 @@ namespace Farm.Customer
         private static readonly int IsCarryHash = Animator.StringToHash("IsCarry");
 
         [SerializeField] private Canvas _orderCanvas;
+        [SerializeField] private Image _imgIcon;
         [SerializeField] private TMP_Text _orderText;
         [SerializeField] private Animator _animator;
         [SerializeField] private Transform _carryAnchor;
@@ -58,7 +60,9 @@ namespace Farm.Customer
             IsClaimed = false;
             _carryVisuals.Hide();
 
-            if (_orderText != null) _orderText.text = requestedCrop.DisplayName;
+            _orderCanvas.enabled = false;
+            if (_imgIcon != null) _imgIcon.sprite = requestedCrop.Icon;
+            if (_orderText != null) _orderText.text = $"x{quantity}";
 
             // Pooled agents can go stale relative to their new transform; Warp re-syncs them onto the NavMesh.
             _agent.Warp(transform.position);
@@ -73,6 +77,7 @@ namespace Farm.Customer
             if (_state == CustomerState.MovingToDock && HasArrived())
             {
                 _state = CustomerState.Waiting;
+                _orderCanvas.enabled = true;
                 SetLocomotion(moving: false, carrying: false);
 
                 // Face the dock's authored orientation instead of whatever direction we arrived from.
@@ -82,6 +87,7 @@ namespace Farm.Customer
             else if (_state == CustomerState.Leaving && HasArrived())
             {
                 CustomerManager.Instance.OnCustomerReachedExit(this);
+                _orderCanvas.enabled = false;
             }
         }
 
