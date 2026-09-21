@@ -156,7 +156,7 @@ MonoBehaviour:
   _buildIcon: {fileID: 4617287764776342985}
   _upgradeViewRoot: {fileID: 6181457830924259296}
   _upgradeLevelText: {fileID: 8232828842135205406}
-  _curProfitText: {fileID: 0}
+  _curProfitText: {fileID: 6126381967006897649}
   _upgradeProductText: {fileID: 8819521540230109025}
   _upgradeCostText: {fileID: 5947477458733897012}
   _upgradeProgressSlider: {fileID: 2174373062931244164}
@@ -373,6 +373,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1477302191399050860, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
+      propertyPath: m_Name
+      value: txtProfit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2078986115169207182, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
+      propertyPath: m_Name
+      value: txtCost
+      objectReference: {fileID: 0}
     - target: {fileID: 2970524630810569220, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
       propertyPath: m_Name
       value: btnUpgrade
@@ -424,6 +432,17 @@ RectTransform:
 --- !u!114 &5947477458733897012 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8208875674965538370, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
+  m_PrefabInstance: {fileID: 2549714498316428150}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6126381967006897649 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8531823355435579015, guid: 7dc6442f4f2b74ee58012c89cba62b9d, type: 3}
   m_PrefabInstance: {fileID: 2549714498316428150}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

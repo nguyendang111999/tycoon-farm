@@ -43,7 +43,7 @@ PrefabInstance:
     - target: {fileID: 5493426642924695319, guid: cfcea1bef252c491e8f667d61a07da44, type: 3}
       propertyPath: _productPrefab
       value: 
-      objectReference: {fileID: 3028316947232948432, guid: 9ec79b3034eac6648995de4931a67001, type: 3}
+      objectReference: {fileID: 835263581433131153, guid: 10817e233b45ea742a759a35cdd749a4, type: 3}
     - target: {fileID: 5493426642924695319, guid: cfcea1bef252c491e8f667d61a07da44, type: 3}
       propertyPath: _stockAnchorRootName
       value: Point

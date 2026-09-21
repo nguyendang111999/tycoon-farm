@@ -115,6 +115,8 @@ namespace Farm.Construction
 
             _upgradeLevelText.text = $"Lv. {_active.Level}";
             _upgradeProductText.text = _active.Config.DisplayName;
+            _curProfitText.text = NumberFormatter.Format(
+                ConstructionMath.CalculateHarvestPrice(_active.Config, _active.Level));
 
             if (_upgradeProgressSlider != null)
             {

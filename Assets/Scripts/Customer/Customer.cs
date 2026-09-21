@@ -87,7 +87,6 @@ namespace Farm.Customer
             else if (_state == CustomerState.Leaving && HasArrived())
             {
                 CustomerManager.Instance.OnCustomerReachedExit(this);
-                _orderCanvas.enabled = false;
             }
         }
 
@@ -131,6 +130,7 @@ namespace Farm.Customer
 
             _carryVisuals.Show(productPrefab, RequestedQuantity);
             _state = CustomerState.Leaving;
+            _orderCanvas.enabled = false;
             _agent.updateRotation = true;
             _agent.SetDestination(_exitPoint.position);
             SetLocomotion(moving: true, carrying: true);
